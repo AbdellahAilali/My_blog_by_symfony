@@ -47,4 +47,31 @@ class UserRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    /*public function usersAndDescription()
+    {
+        return $this->createQueryBuilder('u')
+            ->getQuery()
+            ->getResult();
+
+     /////->join('c.comment, com')
+            ->addSelect('com');/////
+
+    }*/
+
+    public function userAndDescription($id)
+    {
+        return $this->createQueryBuilder('u')
+            ->leftJoin('u.comment', 'com')
+            ->addSelect('com')
+            ->where('')
+            ->where('u.id = :id')
+            ->setParameter('id', $id)
+
+            ->getQuery()
+            ->getResult();
+
+    }
+
+
 }
