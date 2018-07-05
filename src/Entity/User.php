@@ -34,14 +34,16 @@ class User
     private $date_naissance;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="user_comment")
+     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="user_id", orphanRemoval=true)
      */
-    private $comments;
+    private $commentaire;
 
     public function __construct()
     {
-        $this->comments = new ArrayCollection();
+        $this->commentaire = new ArrayCollection();
     }
+
+
 
     public function getId()
     {
@@ -87,31 +89,35 @@ class User
     /**
      * @return Collection|Comment[]
      */
-    public function getComments(): Collection
+    public function getCommentaire(): Collection
     {
-        return $this->comments;
+        return $this->commentaire;
     }
 
-    public function addComment(Comment $comment): self
+    public function addCommentaire(Comment $commentaire): self
     {
-        if (!$this->comments->contains($comment)) {
-            $this->comments[] = $comment;
-            $comment->setUserComment($this);
+        if (!$this->commentaire->contains($commentaire)) {
+            $this->commentaire[] = $commentaire;
+            $commentaire->setUserId($this);
         }
 
         return $this;
     }
 
-    public function removeComment(Comment $comment): self
+    public function removeCommentaire(Comment $commentaire): self
     {
-        if ($this->comments->contains($comment)) {
-            $this->comments->removeElement($comment);
+        if ($this->commentaire->contains($commentaire)) {
+            $this->commentaire->removeElement($commentaire);
             // set the owning side to null (unless already changed)
-            if ($comment->getUserComment() === $this) {
-                $comment->setUserComment(null);
+            if ($commentaire->getUserId() === $this) {
+                $commentaire->setUserId(null);
             }
         }
 
         return $this;
     }
+
+
+
+
 }

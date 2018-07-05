@@ -22,16 +22,15 @@ class Comment
     private $title;
 
     /**
-     * @ORM\Column(type="string", length=500)
+     * @ORM\Column(type="string", length=255)
      */
     private $description;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="comments")
-     * @ORM\JoinColumn(referencedColumnName="id", nullable=false)
-     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="commentaire")
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $user_comment;
+    private $user_id;
 
     public function getId()
     {
@@ -62,14 +61,14 @@ class Comment
         return $this;
     }
 
-    public function getUserComment(): ?User
+    public function getUserId(): ?User
     {
-        return $this->user_comment;
+        return $this->user_id;
     }
 
-    public function setUserComment(?User $user_comment): self
+    public function setUserId(?User $user_id): self
     {
-        $this->user_comment = $user_comment;
+        $this->user_id = $user_id;
 
         return $this;
     }
