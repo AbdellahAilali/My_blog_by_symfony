@@ -18,16 +18,40 @@ class UserController
 
     /**
      *
-     * @Route("/users", name="blog_users")
+     * @Route("/users/{id}", name="blog_users", defaults={"id" = 1})
      */
 
-    public function UserAction()
+    public function UserAction($id)
     {
-        $users = $this->entityManager->getRepository(User::class)->findAll();
 
-        return new JsonResponse($users);
+        /** @var User $user */
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['id'=>$id]);
+
+
+        $result['id'] = $user->getId();
+        $result['first_name'] = $user->getFirstname();
+        $result['last_name'] = $user->getLastname();
+        $result['date_of_birth'] = $user->getDateNaissance()->format('d/m/Y');
+        $tabComm = [];
+
+
+        foreach ( $user->getComments() as $comment){
+
+            $tabComm[] = [
+
+                $result['description'] = $comment->getDescription(),
+                $result['title'] =$comment->getTitle()
+            ];
+
+        }
+
+        $result['comments'] = $tabComm;
+
+        return new JsonResponse($result);
+
 
     }
+
 
 }
 
