@@ -94,11 +94,11 @@ class User
         return $this->comments;
     }
 
-    public function addComments(Comment $comments): self
+    public function addComment(Comment $comment): self
     {
-        if (!$this->comments->contains($comments)) {
-            $this->comments[] = $comments;
-            $comments->setUserId($this);
+        if (!$this->comments->contains($comment)) {
+            $this->comments[] = $comment;
+            $comment->setUser($this);
         }
 
         return $this;
@@ -109,8 +109,8 @@ class User
         if ($this->comments->contains($comments)) {
             $this->comments->removeElement($comments);
             // set the owning side to null (unless already changed)
-            if ($comments->getUserId() === $this) {
-                $comments->setUserId(null);
+            if ($comments->getUser() === $this) {
+                $comments->setUser(null);
             }
         }
 

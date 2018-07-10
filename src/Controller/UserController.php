@@ -2,53 +2,48 @@
 
 namespace App\Controller;
 
+
 use App\Entity\User;
-use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
 
 
 class UserController
 {
-    private $database;
+    private $entityManager;
 
-    public function __construct(EntityManagerInterface $database)
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->database = $database;
+        $this->entityManager = $entityManager;
     }
 
-
     /**
-     * @Route("/user/{id}", name="blog")
+     * @Route ("/user/{id}", name="blog")
+     *
+     * @param $id
+     * @return JsonResponse
      */
-
     public function loadUserAction($id)
     {
-        $users = $this->database->getRepository(User::class)
-            ->findOneBy(["id" => $id]);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(["id" => $id]);
+        $resultat = [];
 
-
-        if (empty($users)) {
-            return new JsonResponse(null, 404);
-        }
-
-        $resultat["lastname"] = $users->getLastname();
-        $resultat["firstname"] = $users->getFirstname();
-        $tabComments = [];
-        $resultat['comments'] = $tabComments;
-
-        foreach ($users->getComments() as $user) {
+        $resultat["firstname"] = $user->getFirstname();
+        $resultat["getLastname"] = $user->getLastname();
+        $tabComments=[];
+        foreach ($user->getComments() as $comment) {
             $tabComments[] = [
 
-                "title" => $user->getTitle(),
-                "description" => $user->getDescription()
+                "title" => $comment->getTitle(),
+                "comment" => $comment->getDescription()
             ];
         }
 
+        $resultat["comments"] = $tabComments;
         return new JsonResponse($resultat);
 
 
     }
-
 
 }

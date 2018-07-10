@@ -1,61 +1,57 @@
 <?php
 
-namespace App\test;
+namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Entity\Comment;
+use App\Entity\User;
+use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Repository\RepositoryFactory;
+use PHPUnit\Framework\TestCase;
 
-
-class UserControllerTest extends WebTestCase
+class UserControllerTest extends TestCase
 {
 
-
-    public function testloadUserAction()
+    public function testLoadUserAction()
     {
-        $client = static::createClient();
+        $responseExpected ='{"firstname":"toto","getLastname":"El","comments":[{"title":"titre","comment":"description"}]}';
 
-        $client->request('GET', '/user/2');
-
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
-
-
-    }
+        $mockConnectBdd = $this->createMock(EntityManager::class);
+        $mockOBjRepo = $this->createMock(ObjectRepository::class);
 
 
-
-
-    /*public function testLoadUserAction()
-    {
-        $response = '{"lastname":null,"firstname":null,"comments":[]}';
-
-
-        $doublurBdd = $this->createMock(\Doctrine\ORM\EntityManagerInterface::class);
-
-        $doubleRepo = $this->createMock(\Doctrine\Common\Persistence\ObjectRepository::class);
-
-
-        $doublurBdd
+        $mockConnectBdd
             ->expects($this->once())
             ->method('getRepository')
-            ->willReturn($doubleRepo);
+            ->willReturn($mockOBjRepo);
 
-        //$doublureUser = $this->createMock(\App\Entity\User::class);
+        $objComment = new Comment();
 
-        $doubleRepo
+        $objComment->setTitle('titre');
+        $objComment->setDescription("description");
+
+        $objUser = new User();
+        $objUser->setLastname("El");
+        $objUser->setFirstname("toto");
+        $objUser->addComment($objComment);
+
+
+        $mockOBjRepo
             ->expects($this->once())
             ->method('findOneBy')
-            ->willReturn(new \App\Entity\User());
+            ->willReturn($objUser);
 
-
-
-
-        $obj = new UserController($doublurBdd);
+        $obj = new UserController($mockConnectBdd);
 
         $content = $obj->loadUserAction(1)->getContent();
 
-        $this->assertEquals($response, $content);
+        $this->assertEquals($responseExpected, $content);
 
 
 
-    }*/
+
+
+    }
 
 }
