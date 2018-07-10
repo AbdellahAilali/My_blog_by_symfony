@@ -13,7 +13,7 @@ class UserControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/user/1');
+        $client->request('GET', '/user/2');
 
         $this->assertSame(200, $client->getResponse()->getStatusCode());
 

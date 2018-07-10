@@ -24,25 +24,30 @@ class UserController
 
     public function loadUserAction($id)
     {
-        $response = $this->database->getRepository(User::class)
+        $users = $this->database->getRepository(User::class)
             ->findOneBy(["id" => $id]);
 
-        $resultat["lastname"] = $response->getLastname();
-        $resultat["firstname"] = $response->getFirstname();
-        $tabComments=[];
 
-        foreach ($response->getComments() as $comment) {
+        if (empty($users)) {
+            return new JsonResponse(null, 404);
+        }
+
+        $resultat["lastname"] = $users->getLastname();
+        $resultat["firstname"] = $users->getFirstname();
+        $tabComments = [];
+        $resultat['comments'] = $tabComments;
+
+        foreach ($users->getComments() as $user) {
             $tabComments[] = [
 
-                "title" => $comment->getTitle(),
-                "description" =>$comment->getDescription()
+                "title" => $user->getTitle(),
+                "description" => $user->getDescription()
             ];
         }
 
-
-
-        $resultat['comments'] = $tabComments;
         return new JsonResponse($resultat);
+
+
     }
 
 
