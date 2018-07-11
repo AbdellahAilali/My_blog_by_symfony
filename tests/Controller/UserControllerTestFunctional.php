@@ -1,7 +1,8 @@
 <?php
 
-namespace Test\Controller;
+namespace App\Controller;
 
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class UserControllerTestFunctional extends WebTestCase
@@ -10,13 +11,13 @@ class UserControllerTestFunctional extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request("GET","/user/1");
+        $client->request("GET","/user/2");
 
         $this->assertSame(200, $client->getResponse()->getStatusCode());
     }
 
 
-    /*public function testDeleteUser()
+    public function testDeleteUser()
     {
         $client = static::createClient();
 
@@ -31,11 +32,11 @@ class UserControllerTestFunctional extends WebTestCase
 
         self::$kernel->getContainer()->get('doctrine.orm.entity_manager')->flush();
 
-        $client->request("DELETE","/user/Abdellah");
+        $client->request("DELETE","/user/Ailali");
 
         $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
 
-    }*/
+    }
 
 
 

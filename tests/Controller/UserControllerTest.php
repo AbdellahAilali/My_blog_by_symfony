@@ -99,7 +99,7 @@ class UserControllerTest extends TestCase
 
     public function testDeleteUserError()
     {
-        $response = (new JsonResponse("non", 404));
+        $response = (new JsonResponse("no", 404));
 
         $mockConnectBdd = $this->createMock(EntityManager::class);
         $mockOBjRepo = $this->createMock(ObjectRepository::class);

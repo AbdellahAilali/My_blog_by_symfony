@@ -17,7 +17,7 @@ class UserController
     }
 
     /**
-     * @Route ("/user/{id}", name="blog")
+     * @Route ("/user/{id}", name="blog", methods={"GET"})
      *
      * @param $id
      * @return JsonResponse
@@ -47,12 +47,12 @@ class UserController
     }
 
     /**
-     * @Route ("/user/{firstname}", name="blog", methods={"DELETE"})
+     * @Route ("/user/{lastname}", name="delete_user", methods={"DELETE"})
      */
-    public function deleteUser($firstname)
+    public function deleteUser($lastname)
     {
         $user = $this->entityManager->getRepository(User::class)
-            ->findOneBy(["firstname" => $firstname]);
+            ->findOneBy(["lastname" => $lastname]);
 
 
         if (empty($user)) {
