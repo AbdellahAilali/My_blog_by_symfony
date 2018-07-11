@@ -125,10 +125,4 @@ class UserControllerTest extends TestCase
 
 
 
-
-
-
-
->>>>>>> feature/blog
-
 }
