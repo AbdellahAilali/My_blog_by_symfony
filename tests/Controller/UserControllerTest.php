@@ -9,17 +9,17 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Repository\RepositoryFactory;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class UserControllerTest extends TestCase
 {
 
     public function testLoadUserAction()
     {
-        $responseExpected ='{"firstname":"toto","getLastname":"El","comments":[{"title":"titre","comment":"description"}]}';
+        $responseExpected = '{"firstname":"toto","getLastname":"El","comments":[{"title":"titre","comment":"description"}]}';
 
         $mockConnectBdd = $this->createMock(EntityManager::class);
         $mockOBjRepo = $this->createMock(ObjectRepository::class);
-
 
         $mockConnectBdd
             ->expects($this->once())
@@ -27,7 +27,6 @@ class UserControllerTest extends TestCase
             ->willReturn($mockOBjRepo);
 
         $objComment = new Comment();
-
         $objComment->setTitle('titre');
         $objComment->setDescription("description");
 
@@ -35,7 +34,6 @@ class UserControllerTest extends TestCase
         $objUser->setLastname("El");
         $objUser->setFirstname("toto");
         $objUser->addComment($objComment);
-
 
         $mockOBjRepo
             ->expects($this->once())
@@ -48,10 +46,35 @@ class UserControllerTest extends TestCase
 
         $this->assertEquals($responseExpected, $content);
 
+    }
+
+    public function testLoadUserActionError()
+    {
+        $mockConnectBdd = $this->createMock(EntityManager::class);
+        $mockOBjRepo = $this->createMock(ObjectRepository::class);
+
+        $mockConnectBdd
+            ->expects($this->once())
+            ->method('getRepository')
+            ->willReturn($mockOBjRepo);
+
+        $mockOBjRepo
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->willReturn(null);
+
+        $responseJsonNull = new JsonResponse(null,404);
+
+        $objUserController = new UserController($mockConnectBdd);
+
+        $content = $objUserController->loadUserAction(55);
+        $this->assertEquals($responseJsonNull , $content);
 
 
 
 
     }
+
+
 
 }

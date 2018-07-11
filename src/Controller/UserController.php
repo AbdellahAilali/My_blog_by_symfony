@@ -27,11 +27,16 @@ class UserController
     public function loadUserAction($id)
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(["id" => $id]);
-        $resultat = [];
 
+        if (empty($user))
+        {
+            return new JsonResponse(null, 404);
+        }
+
+        $resultat = [];
         $resultat["firstname"] = $user->getFirstname();
         $resultat["getLastname"] = $user->getLastname();
-        $tabComments=[];
+        $tabComments = [];
         foreach ($user->getComments() as $comment) {
             $tabComments[] = [
 
@@ -42,6 +47,17 @@ class UserController
 
         $resultat["comments"] = $tabComments;
         return new JsonResponse($resultat);
+    }
+
+
+    /**
+     * @Method("DELETE")
+     *
+     * @@Route ("/user/{id}", name="blog")
+     */
+    public function deleteUser($id)
+    {
+        $deleteUser = $this->entityManager->getRepository(User::class)findOneBy(["id"=>$id]);
 
 
     }
