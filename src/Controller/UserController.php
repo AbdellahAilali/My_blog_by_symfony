@@ -17,42 +17,54 @@ class UserController
     }
 
     /**
+     * @Route ("/user/{id}", name="blog", methods={"GET"})
      *
-     * @Route("/users/{id}", name="blog_users", defaults={"id" = 1})
+     * @param $id
+     * @return JsonResponse
      */
-
-    public function UserAction($id)
+    public function loadUserAction($id)
     {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(["id" => $id]);
 
-        /** @var User $user */
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['id'=>$id]);
-
-
-        $result['id'] = $user->getId();
-        $result['first_name'] = $user->getFirstname();
-        $result['last_name'] = $user->getLastname();
-        $result['date_of_birth'] = $user->getDateNaissance()->format('d/m/Y');
-        $tabComm = [];
-
-
-        foreach ( $user->getComments() as $comment){
-
-            $tabComm[] = [
-
-                $result['description'] = $comment->getDescription(),
-                $result['title'] =$comment->getTitle()
-            ];
-
+        if (empty($user)) {
+            return new JsonResponse(null, 404);
         }
 
-        $result['comments'] = $tabComm;
+        $resultat = [];
+        $resultat["firstname"] = $user->getFirstname();
+        $resultat["getLastname"] = $user->getLastname();
+        $tabComments = [];
+        foreach ($user->getComments() as $comment) {
+            $tabComments[] = [
 
-        return new JsonResponse($result);
+                "title" => $comment->getTitle(),
+                "comment" => $comment->getDescription()
+            ];
+        }
+
+        $resultat["comments"] = $tabComments;
+        return new JsonResponse($resultat);
+    }
+
+    /**
+     * @Route ("/user/{lastname}", name="delete_user", methods={"DELETE"})
+     */
+    public function deleteUser($lastname)
+    {
+        $user = $this->entityManager->getRepository(User::class)
+            ->findOneBy(["lastname" => $lastname]);
+
+
+        if (empty($user)) {
+            return new JsonResponse("no", 404);
+        }
+
+        $this->entityManager->remove($user);
+        $this->entityManager->flush();
+
+        return new JsonResponse("ok", 200);
 
 
     }
 
-
 }
-
-

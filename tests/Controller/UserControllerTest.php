@@ -1,61 +1,134 @@
 <?php
+namespace App\Controller;
 
-namespace App\test;
+use App\Entity\Comment;
+use App\Entity\User;
+use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Repository\RepositoryFactory;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-
-
-class UserControllerTest extends WebTestCase
+class UserControllerTest extends TestCase
 {
 
-
-    public function testloadUserAction()
+    public function testLoadUserAction()
     {
-        $client = static::createClient();
+        $responseExpected = '{"firstname":"toto","getLastname":"El","comments":[{"title":"titre","comment":"description"}]}';
 
-        $client->request('GET', '/users/1');
+        $mockConnectBdd = $this->createMock(EntityManager::class);
+        $mockOBjRepo = $this->createMock(ObjectRepository::class);
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $mockConnectBdd
+            ->expects($this->once())
+            ->method('getRepository')
+            ->willReturn($mockOBjRepo);
 
+        $objComment = new Comment();
+        $objComment->setTitle('titre');
+        $objComment->setDescription("description");
+
+        $objUser = new User();
+        $objUser->setLastname("El");
+        $objUser->setFirstname("toto");
+        $objUser->addComment($objComment);
+
+        $mockOBjRepo
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->willReturn($objUser);
+
+        $obj = new UserController($mockConnectBdd);
+
+        $content = $obj->loadUserAction(1)->getContent();
+
+        $this->assertEquals($responseExpected, $content);
+
+    }
+
+    public function testLoadUserActionError()
+    {
+        $mockConnectBdd = $this->createMock(EntityManager::class);
+        $mockOBjRepo = $this->createMock(ObjectRepository::class);
+
+        $mockConnectBdd
+            ->expects($this->once())
+            ->method('getRepository')
+            ->willReturn($mockOBjRepo);
+
+        $mockOBjRepo
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->willReturn(null);
+
+        $responseJsonNull = new JsonResponse(null,404);
+
+        $objUserController = new UserController($mockConnectBdd);
+
+        $content = $objUserController->loadUserAction(55);
+        $this->assertEquals($responseJsonNull , $content);
+    }
+
+    public function testDeleteUser()
+    {
+        $response = (new JsonResponse("ok", 200));
+
+        $mockConnectBdd = $this->createMock(EntityManager::class);
+        $mockOBjRepo = $this->createMock(ObjectRepository::class);
+
+        $mockConnectBdd
+            ->expects($this->once())
+            ->method('getRepository')
+            ->willReturn($mockOBjRepo);
+
+        $mockUser = $this->createMock(User::class);
+
+        $mockOBjRepo
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->willReturn($mockUser);
+
+        $objUserController = new UserController($mockConnectBdd);
+
+        $content = $objUserController->deleteUser(1);
+        echo $content;
+        $this->assertEquals($response, $content);
+    }
+
+    public function testDeleteUserError()
+    {
+        $response = (new JsonResponse("no", 404));
+
+        $mockConnectBdd = $this->createMock(EntityManager::class);
+        $mockOBjRepo = $this->createMock(ObjectRepository::class);
+
+        $mockConnectBdd
+            ->expects($this->once())
+            ->method('getRepository')
+            ->willReturn($mockOBjRepo);
+
+        //$mockUser = $this->createMock(User::class);
+
+        $mockOBjRepo
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->willReturn(null);
+
+        $objUserController = new UserController($mockConnectBdd);
+
+        $content = $objUserController->deleteUser(1);
+        echo $content;
+        $this->assertEquals($response, $content);
 
     }
 
 
 
 
-    /*public function testLoadUserAction()
-    {
-        $response = '{"lastname":null,"firstname":null,"comments":[]}';
-
-
-        $doublurBdd = $this->createMock(\Doctrine\ORM\EntityManagerInterface::class);
-
-        $doubleRepo = $this->createMock(\Doctrine\Common\Persistence\ObjectRepository::class);
-
-
-        $doublurBdd
-            ->expects($this->once())
-            ->method('getRepository')
-            ->willReturn($doubleRepo);
-
-        //$doublureUser = $this->createMock(\App\Entity\User::class);
-
-        $doubleRepo
-            ->expects($this->once())
-            ->method('findOneBy')
-            ->willReturn(new \App\Entity\User());
 
 
 
-
-        $obj = new UserController($doublurBdd);
-
-        $content = $obj->loadUserAction(1)->getContent();
-
-        $this->assertEquals($response, $content);
-
-
-
-    }*/
+>>>>>>> feature/blog
 
 }

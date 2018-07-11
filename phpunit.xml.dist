@@ -14,7 +14,12 @@
         <env name="APP_DEBUG" value="1" />
         <env name="APP_SECRET" value="s$cretf0rt3st" />
         <env name="SHELL_VERBOSITY" value="-1" />
+<<<<<<< HEAD
         <env name="DATABASE_URL" value="mysql://root:@127.0.0.1:3306/db_blog" />
+=======
+        <env name="DATABASE_URL" value="mysql://root:@127.0.0.1/db_blog" />
+
+>>>>>>> feature/blog
         <!-- define your env variables for the test env here -->
     </php>
 
