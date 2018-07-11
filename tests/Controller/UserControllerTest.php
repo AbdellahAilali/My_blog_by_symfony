@@ -69,11 +69,65 @@ class UserControllerTest extends TestCase
 
         $content = $objUserController->loadUserAction(55);
         $this->assertEquals($responseJsonNull , $content);
+    }
 
+    public function testDeleteUser()
+    {
+        $response = (new JsonResponse("ok", 200));
 
+        $mockConnectBdd = $this->createMock(EntityManager::class);
+        $mockOBjRepo = $this->createMock(ObjectRepository::class);
 
+        $mockConnectBdd
+            ->expects($this->once())
+            ->method('getRepository')
+            ->willReturn($mockOBjRepo);
+
+        $mockUser = $this->createMock(User::class);
+
+        $mockOBjRepo
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->willReturn($mockUser);
+
+        $objUserController = new UserController($mockConnectBdd);
+
+        $content = $objUserController->deleteUser(1);
+        echo $content;
+        $this->assertEquals($response, $content);
+    }
+
+    public function testDeleteUserError()
+    {
+        $response = (new JsonResponse("non", 404));
+
+        $mockConnectBdd = $this->createMock(EntityManager::class);
+        $mockOBjRepo = $this->createMock(ObjectRepository::class);
+
+        $mockConnectBdd
+            ->expects($this->once())
+            ->method('getRepository')
+            ->willReturn($mockOBjRepo);
+
+        //$mockUser = $this->createMock(User::class);
+
+        $mockOBjRepo
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->willReturn(null);
+
+        $objUserController = new UserController($mockConnectBdd);
+
+        $content = $objUserController->deleteUser(1);
+        echo $content;
+        $this->assertEquals($response, $content);
 
     }
+
+
+
+
+
 
 
 

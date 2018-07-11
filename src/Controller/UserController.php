@@ -2,12 +2,10 @@
 
 namespace App\Controller;
 
-
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
-
 
 class UserController
 {
@@ -28,8 +26,7 @@ class UserController
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(["id" => $id]);
 
-        if (empty($user))
-        {
+        if (empty($user)) {
             return new JsonResponse(null, 404);
         }
 
@@ -49,15 +46,23 @@ class UserController
         return new JsonResponse($resultat);
     }
 
-
     /**
-     * @Method("DELETE")
-     *
-     * @@Route ("/user/{id}", name="blog")
+     * @Route ("/user/{firstname}", name="blog", methods={"DELETE"})
      */
-    public function deleteUser($id)
+    public function deleteUser($firstname)
     {
-        $deleteUser = $this->entityManager->getRepository(User::class)findOneBy(["id"=>$id]);
+        $user = $this->entityManager->getRepository(User::class)
+            ->findOneBy(["firstname" => $firstname]);
+
+
+        if (empty($user)) {
+            return new JsonResponse("no", 404);
+        }
+
+        $this->entityManager->remove($user);
+        $this->entityManager->flush();
+
+        return new JsonResponse("ok", 200);
 
 
     }

@@ -71,6 +71,9 @@
     "fig/link-util": {
         "version": "1.0.0"
     },
+    "fzaninotto/faker": {
+        "version": "v1.7.1"
+    },
     "jdorn/sql-formatter": {
         "version": "v1.2.17"
     },
@@ -79,6 +82,15 @@
     },
     "myclabs/deep-copy": {
         "version": "1.8.1"
+    },
+    "nelmio/alice": {
+        "version": "3.2",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "3.2",
+            "ref": "5ef2976310e8f9621c1a722a73bfbe115c1559a3"
+        }
     },
     "nikic/php-parser": {
         "version": "v4.0.2"

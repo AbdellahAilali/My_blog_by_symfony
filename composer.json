@@ -27,6 +27,7 @@
         "symfony/yaml": "^4.1"
     },
     "require-dev": {
+        "nelmio/alice": "^3.4",
         "symfony/browser-kit": "^4.1",
         "symfony/css-selector": "^4.1",
         "symfony/debug-pack": "*",
@@ -45,7 +46,8 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "App\\": "src/",
+            "Test\\": "tests/"
         }
     },
     "autoload-dev": {
