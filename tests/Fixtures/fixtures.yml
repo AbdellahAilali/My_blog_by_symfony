@@ -3,4 +3,7 @@ App\Entity\User:
         lastname: 'Ailali'
         firstname: 'Abdellah'
         date_naissance: '<date_create()>'
-
+    user.2:
+        lastname: 'john'
+        firstname: 'Doe'
+        date_naissance: '<date_create()>'

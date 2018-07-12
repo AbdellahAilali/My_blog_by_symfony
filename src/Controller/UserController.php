@@ -17,14 +17,14 @@ class UserController
     }
 
     /**
-     * @Route ("/user/{id}", name="blog", methods={"GET"})
+     * @Route ("/user/{lastname}", name="blog", methods={"GET"})
      *
      * @param $id
      * @return JsonResponse
      */
-    public function loadUserAction($id)
+    public function loadUserAction($lastname)
     {
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(["id" => $id]);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(["lastname" => $lastname]);
 
         if (empty($user)) {
             return new JsonResponse(null, 404);
@@ -65,6 +65,11 @@ class UserController
         return new JsonResponse("ok", 200);
 
 
+    }
+
+    public function addUserAction()
+    {
+        $user = $this ->entityManager->getRepository(User::class);
     }
 
 }

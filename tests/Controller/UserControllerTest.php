@@ -92,7 +92,7 @@ class UserControllerTest extends TestCase
         $objUserController = new UserController($mockConnectBdd);
 
         $content = $objUserController->deleteUser(1);
-        echo $content;
+
         $this->assertEquals($response, $content);
     }
 
@@ -118,7 +118,7 @@ class UserControllerTest extends TestCase
         $objUserController = new UserController($mockConnectBdd);
 
         $content = $objUserController->deleteUser(1);
-        echo $content;
+
         $this->assertEquals($response, $content);
 
     }
