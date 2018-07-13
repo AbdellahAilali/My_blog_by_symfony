@@ -1,0 +1,32 @@
+PHPUnit 7.2.6 by Sebastian Bergmann and contributors.
+
+Testing App\Controller\UserControllerTest
+....F                                                               5 / 5 (100%)
+
+Time: 109 ms, Memory: 6.00MB
+
+There was 1 failure:
+
+1) App\Controller\UserControllerTest::testCreateUserAction
+Failed asserting that two objects are equal.
+--- Expected
++++ Actual
+@@ @@
+ Symfony\Component\HttpFoundation\JsonResponse Object (
+-    'data' => '"{\u0022lastname\u0022:\u0022san\u0022,\u0022firstname\u0022:\u0022gatama\u0022,\u0022dateNaissance\u0022:\u00222005-08-15T15:52:01+00:00\u0022}"'
++    'data' => '{}'
+     'callback' => null
+     'encodingOptions' => 15
+     'headers' => Symfony\Component\HttpFoundation\ResponseHeaderBag Object (...)
+-    'content' => '"{\u0022lastname\u0022:\u0022san\u0022,\u0022firstname\u0022:\u0022gatama\u0022,\u0022dateNaissance\u0022:\u00222005-08-15T15:52:01+00:00\u0022}"'
++    'content' => '{}'
+     'version' => '1.0'
+     'statusCode' => 200
+     'statusText' => 'OK'
+     'charset' => null
+ )
+
+/home/abdellah/Documents/My_blog_by_symfony/tests/Controller/UserControllerTest.php:152
+
+FAILURES!
+Tests: 5, Assertions: 13, Failures: 1.

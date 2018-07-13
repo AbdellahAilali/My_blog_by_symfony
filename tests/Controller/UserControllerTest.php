@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controller;
 
 use App\Entity\Comment;
@@ -9,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Repository\RepositoryFactory;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 class UserControllerTest extends TestCase
 {
@@ -62,12 +64,12 @@ class UserControllerTest extends TestCase
             ->method('findOneBy')
             ->willReturn(null);
 
-        $responseJsonNull = new JsonResponse(null,404);
+        $responseJsonNull = new JsonResponse(null, 404);
 
         $objUserController = new UserController($mockConnectBdd);
 
         $content = $objUserController->loadUserAction(55);
-        $this->assertEquals($responseJsonNull , $content);
+        $this->assertEquals($responseJsonNull, $content);
     }
 
     public function testDeleteUser()
@@ -98,7 +100,7 @@ class UserControllerTest extends TestCase
 
     public function testDeleteUserError()
     {
-        $response = (new JsonResponse("no", 404));
+        $response = new JsonResponse("no", 404);
 
         $mockConnectBdd = $this->createMock(EntityManager::class);
         $mockOBjRepo = $this->createMock(ObjectRepository::class);
@@ -123,6 +125,57 @@ class UserControllerTest extends TestCase
 
     }
 
+    public function testCreateUserAction()
+    {
+        $mockRequest = $this->createMock(Request::class);
+
+        $mockRequest
+            ->expects($this->once())
+            ->method('getContent')
+            ->willReturn('{"lastname":"san","firstname":"gatama","dateNaissance":"2005-08-15T15:52:01+00:00"}') ;
+
+        $mockEntity = $this->createMock(EntityManager::class);
+
+        $mockEntity
+            ->expects($this->once())
+            ->method('persist');
+
+        $mockEntity
+            ->expects($this->once())
+            ->method('flush');
+
+        $objUser = new UserController($mockEntity);
+
+        $content = $objUser->createUserAction($mockRequest);
+
+        $this->assertEquals(new JsonResponse(), $content);
+
+
+
+
+    }
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
