@@ -52,7 +52,6 @@ class UserController
                 "comment" => $comment->getDescription()
             ];
         }
-
         $result["comments"] = $tabComments;
         return new JsonResponse($result);
     }
@@ -97,14 +96,14 @@ class UserController
         //utilisationde la class stdClass pour avoir
         // acces au valeurs  decode
 
-        $lastName = $result->lastname;
-        $firstName = $result->firstname;
+        $lastname = $result->lastname;
+        $firstname = $result->firstname;
         $date = new \DateTime($result->dateNaissance);
 
         $newUser = new User();
-
-        $newUser->setFirstname($lastName)->setLastname($firstName)
-            ->setDateNaissance($date);
+        $newUser->setLastname($lastname);
+        $newUser->setFirstname($firstname);
+        $newUser->setDateNaissance($date);
 
         $em = $this->entityManager;
 
@@ -113,6 +112,8 @@ class UserController
         $em->flush();
 
         return new JsonResponse();
+
     }
+
 
 }

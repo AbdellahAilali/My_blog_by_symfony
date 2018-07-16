@@ -149,12 +149,7 @@ class UserControllerTest extends TestCase
         $content = $objUser->createUserAction($mockRequest);
 
         $this->assertEquals(new JsonResponse(), $content);
-
-
-
-
     }
-
 
 }
 
