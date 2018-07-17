@@ -13,8 +13,8 @@ class User
 {
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\Column(type="string", length=65)
      */
     private $id;
 
@@ -43,7 +43,13 @@ class User
         $this->comments = new ArrayCollection();
     }
 
-
+    /**
+     * @param $id
+     */
+    public function setId(string $id)
+    {
+        $this->id = $id;
+    }
 
     public function getId()
     {

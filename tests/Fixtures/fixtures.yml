@@ -1,9 +1,11 @@
 App\Entity\User:
     user.1:
+        id: "cd72f69f-ae27-4257-bd0c-1aeff64b6f60"
         lastname: 'Ailali'
         firstname: 'Abdellah'
         date_naissance: '<date_create()>'
     user.2:
+        id: "26ce92f5-0a6d-45e5-b0a3-b018f03dcc49"
         lastname: 'john'
         firstname: 'Doe'
         date_naissance: '<date_create()>'

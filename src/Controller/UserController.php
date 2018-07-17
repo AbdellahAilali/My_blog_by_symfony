@@ -24,18 +24,18 @@ class UserController
     }
 
     /**
-     * @Route ("/user/{lastName}", name="load_user", methods={"GET"})
+     * @Route ("/user/{id}", name="load_user", methods={"GET"})
      *
-     * @param string $lastName
+     * @param string $id
      *
      * @return JsonResponse
      */
-    public function loadUserAction($lastName)
+    public function loadUserAction($id)
     {
         /** @var User $user */
         $user = $this->entityManager
             ->getRepository(User::class)
-            ->findOneBy(["lastname" => $lastName]);
+            ->find($id);
 
         if (empty($user)) {
             return new JsonResponse(null, 404);
@@ -44,7 +44,7 @@ class UserController
         $result = [];
         $result["firstname"] = $user->getFirstname();
         $result["getLastname"] = $user->getLastname();
-
+        echo $result["firstname"];
         $tabComments = [];
         foreach ($user->getComments() as $comment) {
             $tabComments[] = [
@@ -62,7 +62,7 @@ class UserController
      * @param $lastName
      * @return JsonResponse
      */
-    public function deleteUser($lastName)
+    public function deleteUserAction($lastName)
     {
         $user = $this->entityManager->getRepository(User::class)
             ->findOneBy(["lastname" => $lastName]);
@@ -108,6 +108,35 @@ class UserController
         $em = $this->entityManager;
 
         $em->persist($newUser);
+
+        $em->flush();
+
+        return new JsonResponse();
+
+    }
+
+    /**
+     * @Route("/user/modify/{id}", name="modify_user",methods={"PUT"})
+     * @param Request $request
+     * @return JsonResponse
+     */
+
+    public function modifyUserAction(Request $request)
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->find($id ="cd72f69f-ae27-4257-bd0c-1aeff64b6f60");
+        $resultJson = $request->getContent();
+
+        $result = json_decode($resultJson);
+
+        $user->setLastname($result->lastname);
+        $user->setFirstname($result->firstname);
+        $user->setDateNaissance(new \DateTime($result->dateNaissance));
+
+        $em = $this->entityManager;
+
+        $em->persist($user);
 
         $em->flush();
 
