@@ -14,8 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class UserControllerTest extends TestCase
 {
-
-  /* public function testLoadUserAction()
+    public function testLoadUserAction()
     {
         $responseExpected = '{"firstname":"toto","getLastname":"El","comments":[{"title":"titre","comment":"description"}]}';
 
@@ -38,12 +37,12 @@ class UserControllerTest extends TestCase
 
         $mockOBjRepo
             ->expects($this->once())
-            ->method('findOneBy')
+            ->method('find')
             ->willReturn($objUser);
 
         $obj = new UserController($mockConnectBdd);
 
-        $content = $obj->loadUserAction(1)->getContent();
+        $content = $obj->loadUserAction("cd72f69f-ae27-4257-bd0c-1aeff64b6f60")->getContent();
 
         $this->assertEquals($responseExpected, $content);
 
@@ -70,9 +69,9 @@ class UserControllerTest extends TestCase
 
         $content = $objUserController->loadUserAction(55);
         $this->assertEquals($responseJsonNull, $content);
-    }*/
+    }
 
-    public function testDeleteUser()
+    public function testDeleteUserAction()
     {
         $response = (new JsonResponse("ok", 200));
 
@@ -88,17 +87,17 @@ class UserControllerTest extends TestCase
 
         $mockOBjRepo
             ->expects($this->once())
-            ->method('findOneBy')
+            ->method('find')
             ->willReturn($mockUser);
 
         $objUserController = new UserController($mockConnectBdd);
 
-        $content = $objUserController->deleteUser(1);
+        $content = $objUserController->deleteUserAction("cd72f69f-ae27-4257-bd0c-1aeff64b6f60");
 
         $this->assertEquals($response, $content);
     }
 
-    /*public function testDeleteUserError()
+    public function testDeleteUserError()
     {
         $response = new JsonResponse("no", 404);
 
@@ -114,12 +113,12 @@ class UserControllerTest extends TestCase
 
         $mockOBjRepo
             ->expects($this->once())
-            ->method('findOneBy')
+            ->method('find')
             ->willReturn(null);
 
         $objUserController = new UserController($mockConnectBdd);
 
-        $content = $objUserController->deleteUser(1);
+        $content = $objUserController->deleteUserAction("cd72f69f-ae27-4257-bd0c-1aeff64b6f60");
 
         $this->assertEquals($response, $content);
 
@@ -132,7 +131,7 @@ class UserControllerTest extends TestCase
         $mockRequest
             ->expects($this->once())
             ->method('getContent')
-            ->willReturn('{"lastname":"san","firstname":"gatama","dateNaissance":"2005-08-15T15:52:01+00:00"}') ;
+            ->willReturn('{"lastname":"san","firstname":"gatama","dateNaissance":"2005-08-15T15:52:01+00:00"}');
 
         $mockEntity = $this->createMock(EntityManager::class);
 
@@ -190,30 +189,6 @@ class UserControllerTest extends TestCase
         $content = $objUser->modifyUserAction($mockRequest);
 
         $this->assertEquals(new JsonResponse(), $content);
-
-
-    }*/
+    }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

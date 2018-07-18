@@ -44,7 +44,7 @@ class UserController
         $result = [];
         $result["firstname"] = $user->getFirstname();
         $result["getLastname"] = $user->getLastname();
-        echo $result["firstname"];
+
         $tabComments = [];
         foreach ($user->getComments() as $comment) {
             $tabComments[] = [
@@ -62,11 +62,11 @@ class UserController
      * @param $lastName
      * @return JsonResponse
      */
-    public function deleteUserAction($lastName)
+    public function deleteUserAction($id)
     {
+        /** @var User $user */
         $user = $this->entityManager->getRepository(User::class)
-            ->findOneBy(["lastname" => $lastName]);
-
+            ->find($id);
 
         if (empty($user)) {
             return new JsonResponse("no", 404);
@@ -76,8 +76,6 @@ class UserController
         $this->entityManager->flush();
 
         return new JsonResponse("ok", 200);
-
-
     }
 
 
@@ -89,6 +87,8 @@ class UserController
 
     public function createUserAction(Request $request)
     {
+        /** @var Request $request */
+
         $resultJson = $request->getContent();
 
         $result = json_decode($resultJson);
@@ -123,6 +123,8 @@ class UserController
 
     public function modifyUserAction(Request $request)
     {
+        /** @var User $user */
+        /** @var Request $request */
         $user = $this->entityManager
             ->getRepository(User::class)
             ->find($id ="cd72f69f-ae27-4257-bd0c-1aeff64b6f60");
