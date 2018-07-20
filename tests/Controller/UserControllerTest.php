@@ -8,13 +8,14 @@ use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Repository\RepositoryFactory;
+use PHPUnit\Framework\MockObject\Matcher\AnyInvokedCount;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class UserControllerTest extends TestCase
 {
-    public function testLoadUserAction()
+  /*  public function testLoadUserAction()
     {
         $responseExpected = '{"firstname":"toto","getLastname":"El","comments":[{"title":"titre","comment":"description"}]}';
 
@@ -70,7 +71,7 @@ class UserControllerTest extends TestCase
         $content = $objUserController->loadUserAction(55);
         $this->assertEquals($responseJsonNull, $content);
     }
-
+*/
     public function testDeleteUserAction()
     {
         $response = (new JsonResponse("ok", 200));
@@ -96,7 +97,7 @@ class UserControllerTest extends TestCase
 
         $this->assertEquals($response, $content);
     }
-
+/*
     public function testDeleteUserError()
     {
         $response = new JsonResponse("no", 404);
@@ -131,7 +132,7 @@ class UserControllerTest extends TestCase
         $mockRequest
             ->expects($this->once())
             ->method('getContent')
-            ->willReturn('{"lastname":"san","firstname":"gatama","dateNaissance":"2005-08-15T15:52:01+00:00"}');
+            ->willReturn('{"id":"cd72f69f-ae27-4257-bd0c-1aeff64b6f50","lastname":"san","firstname":"gatama","dateNaissance":"2005-08-15T15:52:01+00:00"}');
 
         $mockEntity = $this->createMock(EntityManager::class);
 
@@ -162,18 +163,36 @@ class UserControllerTest extends TestCase
             ->method('getRepository')
             ->willReturn($mockRepo);
 
+        $mockUser = $this->createMock(User::class);
+
         $mockRepo
             ->expects($this->once())
             ->method('find')
-            ->willReturn(new User());
+            ->willReturn($mockUser);
 
         $mockRequest = $this->createMock(Request::class);
 
         $mockRequest
             ->expects($this->once())
             ->method("getContent")
-            ->willReturn('{"id":"26ce92f5-0a6d-45e5-b0a3-b018f0101","lastname":"tony","firstname":"montana",
+            ->willReturn('{"id":"cd72f69f-ae27-4257-bd0c-1aeff64b6f60","lastname":"tony","firstname":"montana",
             "dateNaissance":"1994-08-15T15:52:01+00:00"}');
+
+        $mockUser
+            ->expects($this->once())
+            ->method("setLastname")
+            ->willReturn($mockUser);
+
+        $mockUser
+            ->expects($this->once())
+            ->method("setFirstname")
+            ->willReturn($mockUser);
+
+        $mockUser
+            ->expects($this->once())
+            ->method("setDateNaissance")
+            ->willReturn($mockUser);
+
 
         $mockEntity
             ->expects($this->once())
@@ -186,9 +205,97 @@ class UserControllerTest extends TestCase
 
         $objUser = new UserController($mockEntity);
 
-        $content = $objUser->modifyUserAction($mockRequest);
+        $content = $objUser->modifyUserAction($mockRequest, "cd72f69f-ae27-4257-bd0c-1aeff64b6f60");
 
         $this->assertEquals(new JsonResponse(), $content);
     }
 
+    public function testModifyUserActionError()
+    {
+        $responserror = new JsonResponse("aucun user trouver", 404);
+        $mockEntity = $this->createMock(EntityManager::class);
+
+        $mockRepo = $this->createMock(ObjectRepository::class);
+
+        $mockEntity
+            ->expects($this->once())
+            ->method('getRepository')
+            ->willReturn($mockRepo);
+
+        $mockRepo
+            ->expects($this->once())
+            ->method('find')
+            ->willReturn(null);
+
+        $mockRequest = $this->createMock(Request::class);
+
+        $objUser = new UserController($mockEntity);
+
+        $content = $objUser->modifyUserAction($mockRequest, "");
+
+        $this->assertEquals($responserror, $content);
+    }*/
+
+    public function testLoadAllUserAction()
+    {
+        $mockEntity = $this->createMock(EntityManager::class);
+        $mockRepo = $this->createMock(ObjectRepository::class);
+
+        $mockEntity
+            ->expects($this->once())
+            ->method("getRepository")
+            ->willReturn($mockRepo);
+
+        $user = new User();
+        $user->setId("001");
+        $user->setFirstname("hulk");
+        $user->setLastname("vert");
+
+        $user2 = new User();
+        $user2->setId("002");
+        $user2->setFirstname("flash");
+        $user2->setLastname("rouge");
+
+
+        $mockRepo
+            ->expects($this->once())
+            ->method("findAll")
+            ->willReturn([$user,$user2]);
+
+
+        $user = new UserController($mockEntity);
+
+        $response = $user->loadAllUserAction();
+
+        $expected = '[{"id":"001","firstname":"hulk","lastname":"vert"},{"id":"002","firstname":"flash","lastname":"rouge"}]';
+
+        $this->assertEquals($expected, $response->getContent());
+
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

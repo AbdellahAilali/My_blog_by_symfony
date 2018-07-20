@@ -1,14 +1,21 @@
 PHPUnit 7.2.6 by Sebastian Bergmann and contributors.
 
-Testing App\Controller\UserControllerFunctionalTest
-R                                                                   1 / 1 (100%)
+Testing App\Controller\UserControllerTest
+F                                                                   1 / 1 (100%)
 
-Time: 2.25 seconds, Memory: 22.00MB
+Time: 91 ms, Memory: 4.00MB
 
-There was 1 risky test:
+There was 1 failure:
 
-1) App\Controller\UserControllerFunctionalTest::testModifyUserAction
-This test did not perform any assertions
+1) App\Controller\UserControllerTest::testLoadAllUserAction
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-'[{"id":"cd72f69f","firstname":"abdellzah","lastname":"ailali"},{"id":"cd72f69g","firstname":"hassane","lastname":"ailali"}]'
++'[{"id":"cd72f69f","firstname":"abdellzah","lastname":"ailali"}]'
 
-OK, but incomplete, skipped, or risky tests!
-Tests: 1, Assertions: 0, Risky: 1.
+/home/abdellah/Documents/AppBlog/tests/Controller/UserControllerTest.php:296
+
+FAILURES!
+Tests: 1, Assertions: 1, Failures: 1.

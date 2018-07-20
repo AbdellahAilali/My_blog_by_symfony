@@ -37,6 +37,13 @@ class Comment
         return $this->id;
     }
 
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     public function getTitle(): ?string
     {
         return $this->title;

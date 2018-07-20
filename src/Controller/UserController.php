@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Comment;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Util\Json;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,9 +32,10 @@ class UserController
      *
      * @return JsonResponse
      */
+
     public function loadUserAction($id)
     {
-        /** @var User $user */
+
         $user = $this->entityManager
             ->getRepository(User::class)
             ->find($id);
@@ -58,14 +61,16 @@ class UserController
 
 
     /**
-     * @Route ("/user/{lastname}", name="delete_user", methods={"DELETE"})
+     * @Route ("/user/{id}", name="delete_user", methods={"DELETE"})
      * @param $lastName
      * @return JsonResponse
      */
     public function deleteUserAction($id)
     {
         /** @var User $user */
-        $user = $this->entityManager->getRepository(User::class)
+
+        $user = $this->entityManager
+            ->getRepository(User::class)
             ->find($id);
 
         if (empty($user)) {
@@ -84,23 +89,26 @@ class UserController
      * @param Request $request
      * @return JsonResponse
      */
-
     public function createUserAction(Request $request)
     {
         /** @var Request $request */
 
         $resultJson = $request->getContent();
-
+        if (empty($request)) {
+            return new JsonResponse(null, 404);
+        }
         $result = json_decode($resultJson);
 
         //utilisationde la class stdClass pour avoir
         // acces au valeurs  decode
 
+        $id = $result->id;
         $lastname = $result->lastname;
         $firstname = $result->firstname;
         $date = new \DateTime($result->dateNaissance);
 
         $newUser = new User();
+        $newUser->setId($id);
         $newUser->setLastname($lastname);
         $newUser->setFirstname($firstname);
         $newUser->setDateNaissance($date);
@@ -121,13 +129,19 @@ class UserController
      * @return JsonResponse
      */
 
-    public function modifyUserAction(Request $request)
+    public function modifyUserAction(Request $request, $id)
     {
         /** @var User $user */
         /** @var Request $request */
         $user = $this->entityManager
             ->getRepository(User::class)
-            ->find($id ="cd72f69f-ae27-4257-bd0c-1aeff64b6f60");
+            ->find($id);
+
+
+        if (empty($user)) {
+            return new JsonResponse("aucun user trouver", 404);
+        }
+
         $resultJson = $request->getContent();
 
         $result = json_decode($resultJson);
@@ -145,6 +159,39 @@ class UserController
         return new JsonResponse();
 
     }
+
+    /**
+     * @return JsonResponse
+     * @Route ("/userAll/", name="user_all", methods={"GET"})
+     */
+    public function loadAllUserAction()
+    {
+        /** @var User[] $users */
+        $users = $this->entityManager
+            ->getRepository(User::class)
+            ->findAll();
+
+        $tabUser = [];
+
+        foreach ($users as $key => $user) {
+            $tabUser[$key] = [
+                "id" => $user->getId(),
+                "firstname" => $user->getFirstname(),
+                "lastname" => $user->getLastname(),
+            ];
+
+            foreach ($user->getComments() as $comment) {
+                $tabUser[$key]['comments'][] = [
+                    "title" => $comment->getTitle(),
+                    "comment" => $comment->getDescription()
+                ];
+            }
+        }
+
+        return new JsonResponse($tabUser);
+    }
+
+
 
 
 }
