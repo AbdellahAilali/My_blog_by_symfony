@@ -41,29 +41,7 @@ class CommentControllerTest extends TestCase
         $mockObjectRepo
             ->expects($this->once())
             ->method("find")
-            ->willReturn($mockUser);
-
-        $mockObjectComment = $this->createMock(Comment::class);
-
-       /* $mockObjectComment
-            ->expects($this->once())
-            ->method('setId')
-            ->willReturn($mockObjectComment);
-
-        $mockObjectComment
-            ->expects($this->once())
-            ->method('setTitle')
-            ->willReturn($mockObjectComment);
-
-        $mockObjectComment
-            ->expects($this->once())
-            ->method('setDescription')
-            ->willReturn($mockObjectComment);
-
-        $mockObjectComment
-            ->expects($this->once())
-            ->method('setUser')
-            ->willReturn($mockUser);*/
+            ->willReturn(new User());
 
         $mockEntity
             ->expects($this->once())
@@ -78,6 +56,87 @@ class CommentControllerTest extends TestCase
         $comment = $objComment->createCommentAction($mockRequest);
 
         $this->assertEquals(new JsonResponse(), $comment);
+
+    }
+
+    public function testModifyCommentAction()
+    {
+        $mockEntity =$this->createMock(EntityManager::class);
+        $mockRepo = $this->createMock(ObjectRepository::class);
+
+        $mockEntity
+            ->expects($this->once())
+            ->method("getRepository")
+            ->willReturn($mockRepo);
+        $mockObjectComment = $this->createMock(Comment::class);
+
+        $mockRepo
+            ->expects($this->once())
+            ->method("find")
+            ->willReturn($mockObjectComment);
+
+        $mockRequest = $this->createMock(Request::class);
+
+        $mockRequest
+            ->expects($this->once())
+            ->method("getContent")
+            ->willReturn( '{"id":"commentaire1","title":"mon new title","description":"ma new description","user_id":"cd"}');
+
+        $mockObjectComment
+            ->expects($this->once())
+            ->method("setTitle")
+            ->willReturn($mockObjectComment);
+
+        $mockObjectComment
+            ->expects($this->once())
+            ->method("setDescription")
+            ->willReturn($mockObjectComment);
+
+        $mockEntity
+            ->expects($this->once())
+            ->method("persist");
+
+        $mockEntity
+            ->expects($this->once())
+            ->method("flush");
+
+        $comment = new CommentController($mockEntity);
+
+        $content = $comment->modifyCommentAction($mockRequest, "commentaire1");
+
+        $this->assertEquals(new JsonResponse(), $content);
+
+    }
+
+
+    public function testDeleteCommentAction()
+    {
+        $mockEntity = $this->createMock(EntityManager::class);
+        $mockRepo = $this->createMock(ObjectRepository::class);
+
+        $mockRepo
+            ->expects($this->once())
+            ->method("find")
+            ->willReturn(new Comment());
+
+        $mockEntity
+            ->expects($this->once())
+            ->method("getRepository")
+            ->willReturn($mockRepo);
+
+        $mockEntity
+            ->expects($this->once())
+            ->method("remove");
+
+        $mockEntity
+            ->expects($this->once())
+            ->method("flush");
+
+        $comment =new CommentController($mockEntity);
+
+        $content = $comment->deleteCommentAction("commentaire1");
+
+        $this->assertEquals(new JsonResponse(), $content);
 
     }
 

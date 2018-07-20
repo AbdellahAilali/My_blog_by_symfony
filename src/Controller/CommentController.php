@@ -105,7 +105,9 @@ class CommentController
 
     public function deleteCommentAction($id)
     {
-        $comment = $this->entityManager->getRepository(Comment::class)->find($id);
+        $comment = $this->entityManager
+            ->getRepository(Comment::class)
+            ->find($id);
 
         if (empty($comment))
         {
