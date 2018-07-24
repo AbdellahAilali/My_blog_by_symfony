@@ -15,9 +15,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 class UserControllerTest extends TestCase
 {
-  /*  public function testLoadUserAction()
+    public function testLoadUserAction()
     {
-        $responseExpected = '{"firstname":"toto","getLastname":"El","comments":[{"title":"titre","comment":"description"}]}';
+        $responseExpected = '{"firstname":"rick","lastname":"grimm","comments":[{"title":"walking dead","comment":"la marche des zombie, super cool, je vous la conseil"}]}';
 
         $mockConnectBdd = $this->createMock(EntityManager::class);
         $mockOBjRepo = $this->createMock(ObjectRepository::class);
@@ -28,12 +28,12 @@ class UserControllerTest extends TestCase
             ->willReturn($mockOBjRepo);
 
         $objComment = new Comment();
-        $objComment->setTitle('titre');
-        $objComment->setDescription("description");
+        $objComment->setTitle('walking dead');
+        $objComment->setDescription("la marche des zombie, super cool, je vous la conseil");
 
         $objUser = new User();
-        $objUser->setLastname("El");
-        $objUser->setFirstname("toto");
+        $objUser->setLastname("grimm");
+        $objUser->setFirstname("rick");
         $objUser->addComment($objComment);
 
         $mockOBjRepo
@@ -71,7 +71,7 @@ class UserControllerTest extends TestCase
         $content = $objUserController->loadUserAction(55);
         $this->assertEquals($responseJsonNull, $content);
     }
-*/
+
     public function testDeleteUserAction()
     {
         $response = (new JsonResponse("ok", 200));
@@ -97,7 +97,7 @@ class UserControllerTest extends TestCase
 
         $this->assertEquals($response, $content);
     }
-/*
+
     public function testDeleteUserError()
     {
         $response = new JsonResponse("no", 404);
@@ -234,7 +234,7 @@ class UserControllerTest extends TestCase
         $content = $objUser->modifyUserAction($mockRequest, "");
 
         $this->assertEquals($responserror, $content);
-    }*/
+    }
 
     public function testLoadAllUserAction()
     {
@@ -249,25 +249,25 @@ class UserControllerTest extends TestCase
         $user = new User();
         $user->setId("001");
         $user->setFirstname("hulk");
-        $user->setLastname("vert");
+        $user->setLastname("hogan");
 
         $user2 = new User();
         $user2->setId("002");
-        $user2->setFirstname("flash");
-        $user2->setLastname("rouge");
+        $user2->setFirstname("mike");
+        $user2->setLastname("Tyson");
 
 
         $mockRepo
             ->expects($this->once())
             ->method("findAll")
-            ->willReturn([$user,$user2]);
+            ->willReturn([$user, $user2]);
 
 
         $user = new UserController($mockEntity);
 
         $response = $user->loadAllUserAction();
 
-        $expected = '[{"id":"001","firstname":"hulk","lastname":"vert"},{"id":"002","firstname":"flash","lastname":"rouge"}]';
+        $expected = '[{"id":"001","firstname":"hulk","lastname":"hogan"},{"id":"002","firstname":"mike","lastname":"Tyson"}]';
 
         $this->assertEquals($expected, $response->getContent());
 

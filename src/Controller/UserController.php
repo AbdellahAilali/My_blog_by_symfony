@@ -1,6 +1,6 @@
 <?php
-
 namespace App\Controller;
+header("Access-Control-Allow-Origin: *");
 
 use App\Entity\Comment;
 use App\Entity\User;
@@ -46,7 +46,7 @@ class UserController
 
         $result = [];
         $result["firstname"] = $user->getFirstname();
-        $result["getLastname"] = $user->getLastname();
+        $result["lastname"] = $user->getLastname();
 
         $tabComments = [];
         foreach ($user->getComments() as $comment) {
@@ -85,7 +85,7 @@ class UserController
 
 
     /**
-     * @Route ("/user/", name="create_user", methods={"POST"})
+     * @Route ("/user", name="create_user", methods={"POST"})
      * @param Request $request
      * @return JsonResponse
      */
@@ -162,7 +162,7 @@ class UserController
 
     /**
      * @return JsonResponse
-     * @Route ("/userAll/", name="user_all", methods={"GET"})
+     * @Route ("/userAll", name="user_all", methods={"GET"})
      */
     public function loadAllUserAction()
     {

@@ -52,15 +52,15 @@ class CommentControllerFunctionalTest extends WebTestCase
 
         $client = self::$kernel->getContainer()->get('test.client');
 
-        $client->request("POST", "/comment", array(), array(), array(), '{"id":"commentaire3","title":"title du com3","description":"description du com3","user_id":"cd"}', true);
+        $client->request("POST", "/comment", array(), array(), array(), '{"id":"efbea4d6-2ebc-48b0-8c74-7cc3e0bdac44","title":"la decouvert du continent ameriquain","description":"par dessus les collines et les riviere","user_id":"ab0de897-c33d-4a1f-aaf6-6e5513c17639"}', true);
 
         $this->assertSame(200, $client->getResponse()->getStatusCode());
 
-        $comment = $em->getRepository(Comment::class)->find("commentaire3");
+        $comment = $em->getRepository(Comment::class)->find("efbea4d6-2ebc-48b0-8c74-7cc3e0bdac44");
 
-        $this->assertEquals("title du com3", $comment->getTitle());
-        $this->assertEquals("description du com3", $comment->getDescription());
-        $this->assertEquals("cd", $comment->getUser()->getId());
+        $this->assertEquals("la decouvert du continent ameriquain", $comment->getTitle());
+        $this->assertEquals("par dessus les collines et les riviere", $comment->getDescription());
+        $this->assertEquals("ab0de897-c33d-4a1f-aaf6-6e5513c17639", $comment->getUser()->getId());
 
     }
 
@@ -75,15 +75,15 @@ class CommentControllerFunctionalTest extends WebTestCase
 
         $client = self::$kernel->getContainer()->get('test.client');
 
-        $client->request("PUT", "/modify_comment/commentaire1", array(), array(), array(), '{"id":"commentaire1","title":"mon new title","description":"ma new description","user_id":"cd"}', true);
+        $client->request("PUT", "/modify_comment/efbea4d6-2ebc-48b0-8c74-7cc3e0bdac23", array(), array(), array(), '{"id":"efbea4d6-2ebc-48b0-8c74-7cc3e0bdac23","title":"roots","description":"les decouvertes africaine dans le temps","user_id":"ab0de897-c33d-4a1f-aaf6-6e5513c17639"}', true);
 
         $this->assertSame(200, $client->getResponse()->getStatusCode());
 
-        $comment = $em->getRepository(Comment::class)->findOneBy(["id" => "commentaire1"]);
+        $comment = $em->getRepository(Comment::class)->findOneBy(["id" => "efbea4d6-2ebc-48b0-8c74-7cc3e0bdac23"]);
 
-        $this->assertEquals("mon new title", $comment->getTitle());
-        $this->assertEquals("ma new description", $comment->getDescription());
-        $this->assertEquals("cd", $comment->getUser()->getId());
+        $this->assertEquals("roots", $comment->getTitle());
+        $this->assertEquals("les decouvertes africaine dans le temps", $comment->getDescription());
+        $this->assertEquals("ab0de897-c33d-4a1f-aaf6-6e5513c17639", $comment->getUser()->getId());
 
     }
 
@@ -91,7 +91,7 @@ class CommentControllerFunctionalTest extends WebTestCase
     {
         $client = self::$kernel->getContainer()->get('test.client');
 
-        $client->request("DELETE", "/delete_comment/commentaire1");
+        $client->request("DELETE", "/delete_comment/efbea4d6-2ebc-48b0-8c74-7cc3e0bdac23");
 
         $this->assertSame(200, $client->getResponse()->getStatusCode());
 
