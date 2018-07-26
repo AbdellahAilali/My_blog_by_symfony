@@ -61,8 +61,8 @@ class UserController
 
 
     /**
-     * @Route ("/user/{id}", name="delete_user", methods={"DELETE"})
-     * @param $lastName
+     * @Route ("/user_delete/{id}", name="user_delete", methods={"GET"})
+     * @param $id
      * @return JsonResponse
      */
     public function deleteUserAction($id)
@@ -91,6 +91,9 @@ class UserController
      */
     public function createUserAction(Request $request)
     {
+        //je crée un tableau d'erreur ou je insert toute mais erreur envoyer par le client.
+        $errors = [];
+
         /** @var Request $request */
 
         $resultJson = $request->getContent();
@@ -102,16 +105,29 @@ class UserController
         //utilisationde la class stdClass pour avoir
         // acces au valeurs  decode
 
-        $id = $result->id;
+        if (!isset($result->lastname)) {
+            $errors[] = 'Field "lastname" is missing in the request';
+        }
+        if (!isset($result->firstname)) {
+            $errors[] = 'Field "firstname" is missing in the request';
+        }
+        if (!isset($result->dateNaissance)) {
+            $errors[] = 'Field "DateNaissance" is missing in the request';
+        }
+        if (!empty($errors)) {
+            return new JsonResponse($errors, 400);
+        }
+
+        $id = uniqid();
         $lastname = $result->lastname;
         $firstname = $result->firstname;
-        $date = new \DateTime($result->dateNaissance);
+        $date = $result->dateNaissance;
 
         $newUser = new User();
         $newUser->setId($id);
         $newUser->setLastname($lastname);
         $newUser->setFirstname($firstname);
-        $newUser->setDateNaissance($date);
+        $newUser->setDateNaissance(new \DateTime($date));
 
         $em = $this->entityManager;
 
@@ -124,7 +140,7 @@ class UserController
     }
 
     /**
-     * @Route("/user/modify/{id}", name="modify_user",methods={"PUT"})
+     * @Route("/user/modify/{id}", name="modify_user",methods={"POST"})
      * @param Request $request
      * @return JsonResponse
      */
@@ -146,9 +162,13 @@ class UserController
 
         $result = json_decode($resultJson);
 
-        $user->setLastname($result->lastname);
-        $user->setFirstname($result->firstname);
-        $user->setDateNaissance(new \DateTime($result->dateNaissance));
+        $lastname = $result->lastname;
+        $firstname = $result->firstname;
+        $date = $result->dateNaissance;
+
+        $user->setLastname($lastname);
+        $user->setFirstname($firstname);
+        $user->setDateNaissance(new \DateTime($date));
 
         $em = $this->entityManager;
 
@@ -178,6 +198,7 @@ class UserController
                 "id" => $user->getId(),
                 "firstname" => $user->getFirstname(),
                 "lastname" => $user->getLastname(),
+                "date_naissance"=>$user->getDateNaissance()
             ];
 
             foreach ($user->getComments() as $comment) {
