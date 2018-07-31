@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class UserControllerTest extends TestCase
 {
-    public function testLoadUserAction()
+   public function testLoadUserAction()
     {
         $responseExpected = '{"firstname":"rick","lastname":"grimm","comments":[{"title":"walking dead","comment":"la marche des zombie, super cool, je vous la conseil"}]}';
 
@@ -132,7 +132,7 @@ class UserControllerTest extends TestCase
         $mockRequest
             ->expects($this->once())
             ->method('getContent')
-            ->willReturn('{"id":"cd72f69f-ae27-4257-bd0c-1aeff64b6f50","lastname":"san","firstname":"gatama","dateNaissance":"2005-08-15T15:52:01+00:00"}');
+            ->willReturn('{"lastname":"Ailali","firstname":"Abdellah","birthday":"2018-07-26"}');
 
         $mockEntity = $this->createMock(EntityManager::class);
 
@@ -146,9 +146,13 @@ class UserControllerTest extends TestCase
 
         $objUser = new UserController($mockEntity);
 
-        $content = $objUser->createUserAction($mockRequest);
+        /** @var JsonResponse $jsonResponse */
+        $jsonResponse = $objUser->createUserAction($mockRequest);
 
-        $this->assertEquals(new JsonResponse(), $content);
+        $content = json_decode($jsonResponse->getContent(), true);
+
+        $this->assertArrayHasKey('id', $content);
+        $this->assertEquals('Ailali', $content['lastname']);
     }
 
 
@@ -176,7 +180,7 @@ class UserControllerTest extends TestCase
             ->expects($this->once())
             ->method("getContent")
             ->willReturn('{"id":"cd72f69f-ae27-4257-bd0c-1aeff64b6f60","lastname":"tony","firstname":"montana",
-            "dateNaissance":"1994-08-15T15:52:01+00:00"}');
+            "birthday":"1994-08-15T15:52:01+00:00"}');
 
         $mockUser
             ->expects($this->once())
@@ -190,7 +194,7 @@ class UserControllerTest extends TestCase
 
         $mockUser
             ->expects($this->once())
-            ->method("setDateNaissance")
+            ->method("setBirthday")
             ->willReturn($mockUser);
 
 
@@ -250,11 +254,13 @@ class UserControllerTest extends TestCase
         $user->setId("001");
         $user->setFirstname("hulk");
         $user->setLastname("hogan");
+        $user->setBirthday(new \DateTime("1993-05-01"));
 
         $user2 = new User();
         $user2->setId("002");
         $user2->setFirstname("mike");
         $user2->setLastname("Tyson");
+        $user2->setBirthday(new \DateTime("1983-05-01"));
 
 
         $mockRepo
@@ -262,12 +268,11 @@ class UserControllerTest extends TestCase
             ->method("findAll")
             ->willReturn([$user, $user2]);
 
-
         $user = new UserController($mockEntity);
 
         $response = $user->loadAllUserAction();
 
-        $expected = '[{"id":"001","firstname":"hulk","lastname":"hogan"},{"id":"002","firstname":"mike","lastname":"Tyson"}]';
+        $expected = '[{"id":"001","firstname":"hulk","lastname":"hogan","birthday":"1993-05-01"},{"id":"002","firstname":"mike","lastname":"Tyson","birthday":"1983-05-01"}]';
 
         $this->assertEquals($expected, $response->getContent());
 

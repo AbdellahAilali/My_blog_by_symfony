@@ -1,32 +1,26 @@
 PHPUnit 7.2.6 by Sebastian Bergmann and contributors.
 
-Testing App\Controller\UserControllerTest
-....F                                                               5 / 5 (100%)
+Testing App\Controller\UserControllerFunctionalTest
+E                                                                   1 / 1 (100%)
 
-Time: 109 ms, Memory: 6.00MB
+Time: 2.87 seconds, Memory: 20.00MB
 
-There was 1 failure:
+There was 1 error:
 
-1) App\Controller\UserControllerTest::testCreateUserAction
-Failed asserting that two objects are equal.
---- Expected
-+++ Actual
-@@ @@
- Symfony\Component\HttpFoundation\JsonResponse Object (
--    'data' => '"{\u0022lastname\u0022:\u0022san\u0022,\u0022firstname\u0022:\u0022gatama\u0022,\u0022dateNaissance\u0022:\u00222005-08-15T15:52:01+00:00\u0022}"'
-+    'data' => '{}'
-     'callback' => null
-     'encodingOptions' => 15
-     'headers' => Symfony\Component\HttpFoundation\ResponseHeaderBag Object (...)
--    'content' => '"{\u0022lastname\u0022:\u0022san\u0022,\u0022firstname\u0022:\u0022gatama\u0022,\u0022dateNaissance\u0022:\u00222005-08-15T15:52:01+00:00\u0022}"'
-+    'content' => '{}'
-     'version' => '1.0'
-     'statusCode' => 200
-     'statusText' => 'OK'
-     'charset' => null
- )
+1) App\Controller\UserControllerFunctionalTest::testCreateUserAction
+TypeError: Argument 1 passed to App\Entity\User::setBirthday() must be an instance of Doctrine\DBAL\Types\DateType, string given, called in /home/abdellah/Documents/AppBlog/src/Controller/UserController.php on line 131
 
-/home/abdellah/Documents/My_blog_by_symfony/tests/Controller/UserControllerTest.php:152
+/home/abdellah/Documents/AppBlog/src/Entity/User.php:90
+/home/abdellah/Documents/AppBlog/src/Controller/UserController.php:131
+/home/abdellah/Documents/AppBlog/vendor/symfony/http-kernel/HttpKernel.php:149
+/home/abdellah/Documents/AppBlog/vendor/symfony/http-kernel/HttpKernel.php:66
+/home/abdellah/Documents/AppBlog/vendor/symfony/http-kernel/Kernel.php:188
+/home/abdellah/Documents/AppBlog/vendor/symfony/http-kernel/Client.php:68
+/home/abdellah/Documents/AppBlog/vendor/symfony/framework-bundle/Client.php:131
+/home/abdellah/Documents/AppBlog/vendor/symfony/browser-kit/Client.php:351
+/home/abdellah/Documents/AppBlog/tests/Controller/UserControllerFunctionalTest.php:70
 
-FAILURES!
-Tests: 5, Assertions: 13, Failures: 1.
+ERRORS!
+Tests: 1, Assertions: 0, Errors: 1.
+
+Remaining deprecation notices (4)

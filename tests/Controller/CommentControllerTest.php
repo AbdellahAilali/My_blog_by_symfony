@@ -26,12 +26,12 @@ class CommentControllerTest extends TestCase
         $mockEntity = $this->createMock(EntityManager::class);
         $mockObjectRepo = $this->createMock(ObjectRepository::class);
         $mockRequest = $this->createMock(Request::class);
-        $mockUser = $this->createMock(User::class);
+
 
         $mockRequest
             ->expects($this->once())
             ->method("getContent")
-            ->willReturn('{"id":"commentaire1","title":"mon new title","description":"ma new description","user_id":"cd"}');
+            ->willReturn('{"id":"sldk52fsxsxzc2sfe5f","title":"Paris","description":"Paris de jour comme de nuit","user_id":"32132dsf132ds1f3ds21fsd"}');
 
         $mockEntity
             ->expects($this->once())
@@ -55,13 +55,15 @@ class CommentControllerTest extends TestCase
 
         $comment = $objComment->createCommentAction($mockRequest);
 
-        $this->assertEquals(new JsonResponse(), $comment);
+        $response = ["id"=>"sldk52fsxsxzc2sfe5f","title"=>"Paris","description"=>"Paris de jour comme de nuit","user_id"=>"32132dsf132ds1f3ds21fsd"];
+
+        $this->assertEquals(new JsonResponse($response), $comment);
 
     }
 
     public function testModifyCommentAction()
     {
-        $mockEntity =$this->createMock(EntityManager::class);
+        $mockEntity = $this->createMock(EntityManager::class);
         $mockRepo = $this->createMock(ObjectRepository::class);
 
         $mockEntity
@@ -80,7 +82,7 @@ class CommentControllerTest extends TestCase
         $mockRequest
             ->expects($this->once())
             ->method("getContent")
-            ->willReturn( '{"id":"commentaire1","title":"mon new title","description":"ma new description","user_id":"cd"}');
+            ->willReturn('{"id":"commentaire1","title":"mon new title","description":"ma new description","user_id":"cd"}');
 
         $mockObjectComment
             ->expects($this->once())
@@ -132,7 +134,7 @@ class CommentControllerTest extends TestCase
             ->expects($this->once())
             ->method("flush");
 
-        $comment =new CommentController($mockEntity);
+        $comment = new CommentController($mockEntity);
 
         $content = $comment->deleteCommentAction("commentaire1");
 

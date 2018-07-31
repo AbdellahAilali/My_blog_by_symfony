@@ -1,0 +1,11 @@
+default:
+    extensions:
+        Ubirak\RestApiBehatExtension\Extension:
+            rest:
+                base_url: http://localhost:8000
+                store_response: true
+    suites:
+        default:
+            contexts:
+                - Ubirak\RestApiBehatExtension\RestApiContext
+                - Ubirak\RestApiBehatExtension\Json\JsonContext

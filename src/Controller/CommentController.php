@@ -63,7 +63,10 @@ class CommentController
         $em->persist($comment);
         $em->flush();
 
-        return new JsonResponse();
+        //renvoie id pour pouvoir effectuer mes tests
+        return new JsonResponse(["id"=>$id, "title"=> $title, "description"=>$description,"user_id"=>$userId]);
+
+
     }
     /**
      * @route("/modify_comment/{id}", name="modify_comment", methods={"PUT"})

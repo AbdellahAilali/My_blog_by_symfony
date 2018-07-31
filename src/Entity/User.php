@@ -4,7 +4,9 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\DateType;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints\Date;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
@@ -29,9 +31,9 @@ class User
     private $firstname;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="date")
      */
-    private $date_naissance;
+    private $birthday;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="user", orphanRemoval=true)
@@ -80,14 +82,14 @@ class User
         return $this;
     }
 
-    public function getDateNaissance(): ?\DateTimeInterface
+    public function getBirthday(): ?\DateTime
     {
-        return $this->date_naissance;
+        return $this->birthday;
     }
 
-    public function setDateNaissance(\DateTimeInterface $date_naissance): self
+    public function setBirthday(\DateTime $birthday): self
     {
-        $this->date_naissance = $date_naissance;
+        $this->birthday = $birthday;
 
         return $this;
     }

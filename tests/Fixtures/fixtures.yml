@@ -1,16 +1,17 @@
 App\Entity\User:
     user.1:
-        id: "ab0de897-c33d-4a1f-aaf6-6e5513c17639"
+        id: "32132dsf132ds1f3ds21fsd"
         lastname: 'Ailali'
         firstname: 'Abdellah'
-        date_naissance: '<date_create()>'
+        birthday: '<date_create()>'
 
 App\Entity\Comment:
     comment.1:
-        id: "efbea4d6-2ebc-48b0-8c74-7cc3e0bdac23"
+        id: "654984ds65f1d651f6s5d1f"
         title: "Le chateau ambulant"
         description: "ma description"
         user: '@user.1'
+
 
 
 

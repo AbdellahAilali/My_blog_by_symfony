@@ -1,6 +1,6 @@
 <?php
 namespace App\Controller;
-header("Access-Control-Allow-Origin: *");
+
 
 use App\Entity\Comment;
 use App\Entity\User;
@@ -61,7 +61,7 @@ class UserController
 
 
     /**
-     * @Route ("/user_delete/{id}", name="user_delete", methods={"GET"})
+     * @Route ("/user_delete/{id}", name="user_delete", methods={"DELETE"})
      * @param $id
      * @return JsonResponse
      */
@@ -111,36 +111,39 @@ class UserController
         if (!isset($result->firstname)) {
             $errors[] = 'Field "firstname" is missing in the request';
         }
-        if (!isset($result->dateNaissance)) {
+        if (!isset($result->birthday)) {
             $errors[] = 'Field "DateNaissance" is missing in the request';
         }
         if (!empty($errors)) {
             return new JsonResponse($errors, 400);
         }
-
+        //uniqid sert a crée un id automatiquement
         $id = uniqid();
         $lastname = $result->lastname;
         $firstname = $result->firstname;
-        $date = $result->dateNaissance;
+        $date = $result->birthday;
 
         $newUser = new User();
         $newUser->setId($id);
         $newUser->setLastname($lastname);
         $newUser->setFirstname($firstname);
-        $newUser->setDateNaissance(new \DateTime($date));
+        $dateTime = new \DateTime($date);
+        $newUser->setBirthday($dateTime);
+
+        $birthday = $dateTime->format('Y-m-d');
 
         $em = $this->entityManager;
 
         $em->persist($newUser);
 
         $em->flush();
-
-        return new JsonResponse();
+        //renvoie l'id en json
+        return new JsonResponse(['id' => $id, "lastname"=>$lastname, "firstname"=>$firstname, "birthday"=>$birthday]);
 
     }
 
     /**
-     * @Route("/user/modify/{id}", name="modify_user",methods={"POST"})
+     * @Route("/user/modify/{id}", name="modify_user",methods={"PUT"})
      * @param Request $request
      * @return JsonResponse
      */
@@ -153,7 +156,6 @@ class UserController
             ->getRepository(User::class)
             ->find($id);
 
-
         if (empty($user)) {
             return new JsonResponse("aucun user trouver", 404);
         }
@@ -164,11 +166,11 @@ class UserController
 
         $lastname = $result->lastname;
         $firstname = $result->firstname;
-        $date = $result->dateNaissance;
+        $date = $result->birthday;
 
         $user->setLastname($lastname);
         $user->setFirstname($firstname);
-        $user->setDateNaissance(new \DateTime($date));
+        $user->setBirthday(new \DateTime($date));
 
         $em = $this->entityManager;
 
@@ -194,12 +196,16 @@ class UserController
         $tabUser = [];
 
         foreach ($users as $key => $user) {
+
             $tabUser[$key] = [
                 "id" => $user->getId(),
                 "firstname" => $user->getFirstname(),
                 "lastname" => $user->getLastname(),
-                "date_naissance"=>$user->getDateNaissance()
+                //j'utilise l& function fomat pour lui dire que je ne souhaite avoir
+                //y-m-d, car il me renvoie un objet avec tout les caractéristique.
+                "birthday"=>$user->getBirthday()->format('Y-m-d'),
             ];
+            //var_dump($user->getBirthday()->format('Y-m-d'));
 
             foreach ($user->getComments() as $comment) {
                 $tabUser[$key]['comments'][] = [
@@ -208,7 +214,6 @@ class UserController
                 ];
             }
         }
-
         return new JsonResponse($tabUser);
     }
 
