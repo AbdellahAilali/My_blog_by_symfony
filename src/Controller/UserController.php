@@ -1,10 +1,14 @@
 <?php
+
 namespace App\Controller;
 
 use App\Entity\Comment;
 use App\Entity\User;
+use App\Form\UserFormType;
+use App\Manager\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Util\Json;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,11 +21,23 @@ class UserController
     private $entityManager;
 
     /**
-     * @param EntityManagerInterface $entityManager
+     * @var UserManager
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    private $userManager;
+    /**
+     * @var FormFactoryInterface
+     */
+    private $formFactory;
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param UserManager $userManager
+     */
+    public function __construct(EntityManagerInterface $entityManager, UserManager $userManager, FormFactoryInterface $formFactory)
     {
         $this->entityManager = $entityManager;
+        $this->userManager = $userManager;
+        $this->formFactory = $formFactory;
     }
 
     /**
@@ -90,55 +106,25 @@ class UserController
      */
     public function createUserAction(Request $request)
     {
-        //je crée un tableau d'erreur ou je insert toute mais erreur envoyer par le client.
-        $errors = [];
+        //je crée mon formlaire a partir de ma class UserFormType
+        //Je le soumette et lui envoye ma request
+        //true comme 2param pour qu'il me renvoie un tab associatif
+        $form = $this->formFactory->create(UserFormType::class);
+        $form->submit(json_decode($request->getContent(), true));
 
-        /** @var Request $request */
+        $data = $form->getData();
+        if (!$form->isValid()) {
+            return new JsonResponse([(string)$form->getErrors(true)], 400);
+        }
 
-        $resultJson = $request->getContent();
-        if (empty($request)) {
-            return new JsonResponse(null, 404);
-        }
-        $result = json_decode($resultJson);
-
-        //utilisationde la class stdClass pour avoir
-        // acces au valeurs  decode
-
-        if (!isset($result->lastname)) {
-            $errors[] = 'Field "lastname" is missing in the request';
-        }
-        if (!isset($result->firstname)) {
-            $errors[] = 'Field "firstname" is missing in the request';
-        }
-        if (!isset($result->birthday)) {
-            $errors[] = 'Field "DateNaissance" is missing in the request';
-        }
-        if (!empty($errors)) {
-            return new JsonResponse($errors, 400);
-        }
         //uniqid sert a crée un id automatiquement
         $id = uniqid();
-        $lastname = $result->lastname;
-        $firstname = $result->firstname;
-        $date = $result->birthday;
 
-        $newUser = new User();
-        $newUser->setId($id);
-        $newUser->setLastname($lastname);
-        $newUser->setFirstname($firstname);
-        $dateTime = new \DateTime($date);
-        $newUser->setBirthday($dateTime);
 
-        $birthday = $dateTime->format('Y-m-d');
+        $this->userManager->createUser($id, $data['firstname'], $data['lastname'],new \DateTime($data['birthday']));
 
-        $em = $this->entityManager;
-
-        $em->persist($newUser);
-
-        $em->flush();
         //renvoie l'id en json
-        return new JsonResponse(['id' => $id, "lastname"=>$lastname, "firstname"=>$firstname, "birthday"=>$birthday]);
-
+        return new JsonResponse($data);
     }
 
     /**
@@ -202,7 +188,7 @@ class UserController
                 "lastname" => $user->getLastname(),
                 //j'utilise l& function fomat pour lui dire que je ne souhaite avoir
                 //y-m-d, car il me renvoie un objet avec tout les caractéristique.
-                "birthday"=>$user->getBirthday()->format('Y-m-d'),
+                "birthday" => $user->getBirthday()->format('Y-m-d'),
             ];
             //var_dump($user->getBirthday()->format('Y-m-d'));
 
@@ -215,8 +201,6 @@ class UserController
         }
         return new JsonResponse($tabUser);
     }
-
-
 
 
 }

@@ -40,8 +40,19 @@ class User
      */
     private $comments;
 
-    public function __construct()
+    /**
+     * @param string             $id
+     * @param string             $firstName
+     * @param string             $lastName
+     * @param \DateTimeInterface $birthDay
+     */
+    public function __construct(string $id, string $firstName, string $lastName, \DateTimeInterface $birthDay)
     {
+        $this->id = $id;
+        $this->firstname = $firstName;
+        $this->lastname = $lastName;
+        $this->birthday = $birthDay;
+
         $this->comments = new ArrayCollection();
     }
 
