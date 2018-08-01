@@ -38,9 +38,31 @@ class CommentController
      */
     public function createCommentAction(Request $request)
     {
-        $resultJson = $request->getContent();
+        //je crée un tableau d'erreur ou je insert toute mais erreur envoyer par le client.
+        $errors = [];
 
+        $resultJson = $request->getContent();
+        if (empty($request))
+        {
+            return new JsonResponse(null,404);
+        }
         $result = json_decode($resultJson);
+        if (!isset($result->id)){
+           $errors[] = 'Field "id" is missing in the request';
+        }
+        if (!isset($result->title)){
+            $errors[] = 'Field "title" is missing in the request';
+        }
+        if (!isset($result->description)){
+            $errors[] = 'Field "description" is missing in the request';
+        }
+        if (!isset($result->user_id)){
+            $errors[] = 'Field "user_id" is missing in the request';
+        }
+        if (!empty($errors)){
+            return new JsonResponse($errors,400);
+        }
+
 
         $id = $result->id;
         $title = $result->title;
@@ -69,6 +91,9 @@ class CommentController
 
     }
     /**
+     * @todo  modifier nom des routes, rajouter une sortie erreur
+     */
+    /**
      * @route("/modify_comment/{id}", name="modify_comment", methods={"PUT"})
      * @param $id
      * @return JsonResponse
@@ -80,9 +105,13 @@ class CommentController
             ->getRepository(Comment::class)
             ->find($id);
 
+        if (empty($comment))
+        {
+            return new JsonResponse("Aucun commentaire trouver",404);
+        }
+
         $resultJson = $request->getContent();
         $result = json_decode($resultJson);
-
 
         $title = $result->title;
         $description = $result->description;

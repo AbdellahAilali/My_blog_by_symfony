@@ -53,7 +53,7 @@ class CommentControllerFunctionalTest extends WebTestCase
         $client = self::$kernel->getContainer()->get('test.client');
 
         $client->request("POST", "/comment", array(), array(),
-            array(), '{"id":"cfp5kdff85545","title":"la decouvert du continent ameriquain","description":"par dessus les collines et les riviere","user_id":"32132dsf132ds1f3ds21fsd"}', true);
+            array(), '{"id":"e5ea427d-c53d-44df-999","title":"la decouvert du continent ameriquain","description":"par dessus les collines et les riviere","user_id":"32132dsf132ds1f3ds21fsd"}', true);
 
         $this->assertSame(200, $client->getResponse()->getStatusCode());
 
