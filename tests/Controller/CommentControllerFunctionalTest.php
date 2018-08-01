@@ -23,7 +23,7 @@ class CommentControllerFunctionalTest extends WebTestCase
 {
     protected function setUp()
     {
-        /*  /** @var PersistentObject persist,flush */
+        //** @var PersistentObject persist,flush */
 
         static::createClient();
 

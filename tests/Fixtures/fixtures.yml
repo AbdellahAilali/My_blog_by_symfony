@@ -4,14 +4,33 @@ App\Entity\User:
         lastname: 'Ailali'
         firstname: 'Abdellah'
         birthday: '<date_create()>'
+    user.2:
+        id: "025caf9e-e6e6-4aac-a45b"
+        lastname: 'Doe'
+        firstname: 'John'
+        birthday: '<date_create()>'
+    user.3:
+        id: "4eb298dd-5cd7-4d10-9b9q"
+        lastname: 'Malik'
+        firstname: 'ben'
+        birthday: '<date_create()>'
 
 App\Entity\Comment:
     comment.1:
         id: "654984ds65f1d651f6s5d1f"
-        title: "Le chateau ambulant"
-        description: "ma description"
+        title: "Le château ambulant"
+        description: "La jeune Sophie, âgée de 18 ans, travaille sans relâche dans la boutique de chapelier que tenait son père avant de mourir. Lors de l'une de ses rares sorties en ville, elle fait la connaissance de Hauru le Magicien"
         user: '@user.1'
-
+    comment.2:
+        id: "78940a8b-50db-4720-9a7d"
+        title: "Le voyage de Chihiro"
+        description: "Une fillette de 10 ans, prise au piège dans une maison sur la plage hantee par des esprits et des fantômes, doit combattre sorcières et dragons"
+        user: '@user.2'
+    comment.3:
+        id: "c6d90297-d196-4d31-ab93"
+        title: "Kill Bill"
+        description: "Condamnee à mort par son propre patron Bill, une femme-assassin survit à une balle dans la tête.  Quatre ans plus tard elle sort du coma et jure d’avoir sa vengeance.… "
+        user: '@user.3'
 
 
 
