@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Comment
 {
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="NONE")
@@ -31,6 +32,20 @@ class Comment
      * @ORM\JoinColumn(nullable=false)
      */
     private $user;
+
+    /**
+     * Comment constructor.
+     * @param $id
+     * @param $title
+     * @param $description
+     */
+    public function __construct($id, $title, $description, $user)
+    {
+        $this->id = $id;
+        $this->title = $title;
+        $this->description = $description;
+        $this->user = $user;
+    }
 
     public function getId()
     {

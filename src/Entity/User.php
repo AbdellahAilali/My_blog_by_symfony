@@ -57,6 +57,18 @@ class User
     }
 
     /**
+     * @param string             $firstName
+     * @param string             $lastName
+     * @param \DateTimeInterface $birthDay
+     */
+    public function update(string $firstName, string $lastName, \DateTimeInterface $birthDay)
+    {
+        $this->firstname = $firstName;
+        $this->lastname = $lastName;
+        $this->birthday = $birthDay;
+    }
+
+    /**
      * @param $id
      */
     public function setId(string $id)

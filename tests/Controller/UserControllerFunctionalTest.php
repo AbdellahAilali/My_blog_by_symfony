@@ -82,7 +82,7 @@ class UserControllerFunctionalTest extends WebTestCase
 
     }*/
 
-   /* public function testModifyUserAction()
+    public function testModifyUserAction()
     {
         $em = self::$kernel->getContainer()->get('doctrine.orm.entity_manager');
 
@@ -100,7 +100,7 @@ class UserControllerFunctionalTest extends WebTestCase
         $this->assertEquals("Mike", $user->getFirstname());
         $this->assertEquals("1988-08-01", $user->getBirthday()->format('Y-m-d'));
 
-    }*/
+    }
 
    /* public function testLoadAllUserAction()
     {
