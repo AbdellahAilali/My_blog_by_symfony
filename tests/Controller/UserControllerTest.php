@@ -4,12 +4,15 @@ namespace App\Controller;
 
 use App\Entity\Comment;
 use App\Entity\User;
+use App\Manager\UserManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Repository\RepositoryFactory;
 use PHPUnit\Framework\MockObject\Matcher\AnyInvokedCount;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\Test\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -127,6 +130,17 @@ class UserControllerTest extends TestCase
 
     public function testCreateUserAction()
     {
+        $mockFormFactory = $this->createMock(FormFactoryInterface::class);
+
+        $mockFormInterface = $this->createMock(FormInterface::class);
+
+        $mockUserManager = $this->createMock(UserManager::class);
+
+        $MockFormFactory
+            ->expects($this->once())
+            ->method('create')
+            ->willReturn($mockFormInterface);
+
         $mockRequest = $this->createMock(Request::class);
 
         $mockRequest
@@ -147,7 +161,7 @@ class UserControllerTest extends TestCase
         $objUser = new UserController($mockEntity);
 
         /** @var JsonResponse $jsonResponse */
-        $jsonResponse = $objUser->createUserAction($mockRequest);
+        $jsonResponse = $objUser->createUserAction($mockUserManager,$mockFormFactory);
 
         $content = json_decode($jsonResponse->getContent(), true);
 

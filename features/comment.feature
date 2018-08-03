@@ -7,15 +7,14 @@ Feature: Comment
     When I send a POST request to "/comment" with body:
     """
     {
-     "id":"cfp5kdff85545",
      "title":"la decouvert du continent ameriquain",
      "description":"par dessus les collines et les riviere",
-     "user_id":"32132dsf132ds1f3ds21fsd"
+     "user": "025caf9e-e6e6-4aac-a45b"
     }
     """
     Then the response status code should be 200
     Then the response should be in JSON
-
+    Then print response
 
   Scenario: error create new comment empty
 
@@ -23,7 +22,7 @@ Feature: Comment
     """
     {
      id":"cfp5kdff85545",
-     "title":"la decouvert du continent ameriquain",
+     "title":"la decouvert du continent ameriquain"
     }
     """
     Then the response status code should be 400
@@ -35,10 +34,8 @@ Feature: Comment
     When I send a PUT request to "/modify_comment/654984ds65f1d651f6s5d1f" with body:
     """
     {
-     "id":"654984ds65f1d651f6s5d1f",
      "title":"roots",
-     "description":"les decouvertes africaine dans le temps",
-     "user_id":"32132dsf132ds1f3ds21fsd"
+     "description":"les decouvertes africaine dans le temps"
     }
     """
     Then the response status code should be 200
@@ -47,16 +44,8 @@ Feature: Comment
 
   Scenario: error modify comment by id, I give a bad id
 
-    When I send a PUT request to "/modify_comment/654984ds65f1d651f6s" with body:
-     """
-    {
-      "id":"654984ds65f1d651f6s",
-      "title":"roots",
-      "description":"les decouvertes africaine dans le temps",
-      "user_id":"32132dsf132ds1f3ds21fsd"
-    }
-    """
-    Then the response status code should be 404
+    When I send a PUT request to "/modify_comment/654984ds65f1d651f6s"
+    Then the response status code should be 400
 
 
    Scenario: delete comment by id

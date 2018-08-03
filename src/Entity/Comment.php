@@ -35,16 +35,27 @@ class Comment
 
     /**
      * Comment constructor.
-     * @param $id
-     * @param $title
-     * @param $description
+     * @param string $id
+     * @param string $title
+     * @param string $description
+     * @param User $user
      */
-    public function __construct($id, $title, $description, $user)
+    public function __construct(string $id,string $title,string $description,User $user)
     {
         $this->id = $id;
         $this->title = $title;
         $this->description = $description;
         $this->user = $user;
+    }
+
+    /**
+     * @param string $title
+     * @param string $description
+     */
+    public function update(string $title,string $description)
+    {
+        $this->title = $title;
+        $this->description = $description;
     }
 
     public function getId()

@@ -9,85 +9,56 @@
 namespace App\Controller;
 
 use App\Entity\Comment;
-use App\Entity\User;
+use App\Form\CommentCreateFormType;
+use App\Manager\CommentManager;
 use Doctrine\ORM\EntityManagerInterface;
-use PHPUnit\Util\Json;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
-
+use Symfony\Component\Form\FormFactoryInterface;
+use App\Form\CommentFormType;
 
 class CommentController
 {
+
     /**
-     * @var EntityManagerInterface
+     * @var FormFactoryInterfacex
      */
-    private $entityManager;
+    private $formFactory;
+    /**
+     * @var CommentManager
+     */
+    private $commmentManager;
 
     /**
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(CommentManager $commmentManager, FormFactoryInterface $formFactory)
     {
-        $this->entityManager = $entityManager;
+        $this->commmentManager = $commmentManager;
+        $this->formFactory = $formFactory;
     }
 
     /**
      * @Route("/comment", name="add_comment", methods={"POST"})
+     * @param Request $request
      * @return JsonResponse
      */
     public function createCommentAction(Request $request)
     {
-        //je crée un tableau d'erreur ou je insert toute mais erreur envoyer par le client.
-        $errors = [];
+        $form = $this->formFactory->create(CommentCreateFormType::class);
+        $form->submit(json_decode($request->getContent(), true));
 
-        $resultJson = $request->getContent();
-        if (empty($request))
-        {
-            return new JsonResponse(null,404);
-        }
-        $result = json_decode($resultJson);
-        if (!isset($result->id)){
-           $errors[] = 'Field "id" is missing in the request';
-        }
-        if (!isset($result->title)){
-            $errors[] = 'Field "title" is missing in the request';
-        }
-        if (!isset($result->description)){
-            $errors[] = 'Field "description" is missing in the request';
-        }
-        if (!isset($result->user_id)){
-            $errors[] = 'Field "user_id" is missing in the request';
-        }
-        if (!empty($errors)){
-            return new JsonResponse($errors,400);
+        $data = $form->getData();
+        if (!$form->isValid()) {
+            return new JsonResponse([(string)$form->getErrors(true)], 400);
         }
 
+        $id = uniqid();
+        $this->commmentManager->createComment($id, $data['title'], $data['description'],$data['user']) ;
 
-        $id = $result->id;
-        $title = $result->title;
-        $description = $result->description;
-        $userId = $result->user_id;
-
-        $user = $this->entityManager
-            ->getRepository(User::class)
-            ->find($userId);
-
-        $comment = new Comment();
-
-        $comment->setId($id);
-        $comment->setTitle($title);
-        $comment->setDescription($description);
-        $comment->setUser($user);
-
-        $em = $this->entityManager;
-
-        $em->persist($comment);
-        $em->flush();
-
-        //renvoie id pour pouvoir effectuer mes tests
-        return new JsonResponse(["id"=>$id, "title"=> $title, "description"=>$description,"user_id"=>$userId]);
-
+        return new JsonResponse(array_merge(['id' => $id], $data));
 
     }
     /**
@@ -96,36 +67,29 @@ class CommentController
     /**
      * @route("/modify_comment/{id}", name="modify_comment", methods={"PUT"})
      * @param $id
+     * @param Request $request
      * @return JsonResponse
      */
 
     public function modifyCommentAction(Request $request, $id)
     {
-        $comment = $this->entityManager
-            ->getRepository(Comment::class)
-            ->find($id);
+        $form = $this->formFactory->create(CommentFormType::class);
+        $form->submit(json_decode($request->getContent(), true));
 
-        if (empty($comment))
-        {
-            return new JsonResponse("Aucun commentaire trouver",404);
+        $data = $form->getData();
+
+        if (!$form->isValid()) {
+            return new JsonResponse([(string)
+            $form->getErrors(true)], 400);
         }
 
-        $resultJson = $request->getContent();
-        $result = json_decode($resultJson);
+        $this->commmentManager->modifyComment(
+            $id,
+            $data['title'],
+            $data['description']
+        );
 
-        $title = $result->title;
-        $description = $result->description;
-
-
-        $comment->setTitle($title);
-        $comment->setDescription($description);
-
-        $em = $this->entityManager;
-
-        $em->persist($comment);
-        $em->flush();
-
-        return new JsonResponse();
+        return new JsonResponse(array_merge(['id'=>$id],$data));
     }
 
 
@@ -137,17 +101,14 @@ class CommentController
 
     public function deleteCommentAction($id)
     {
-        $comment = $this->entityManager
-            ->getRepository(Comment::class)
-            ->find($id);
+        try {
+            $this->commmentManager->deleteComment($id);
+        } catch (NotFoundHttpException $exception) {
 
-        if (empty($comment))
-        {
-            return new JsonResponse(null, 404);
+            return new JsonResponse($exception->getMessage(),
+                $exception->getStatusCode());
         }
 
-        $this->entityManager->remove($comment);
-        $this->entityManager->flush();
 
         return new JsonResponse();
 

@@ -47,20 +47,19 @@ class CommentControllerFunctionalTest extends WebTestCase
 
     public function testCreateCommentFunctionalAction()
     {
-
         $em = self::$kernel->getContainer()->get('doctrine.orm.entity_manager');
 
         $client = self::$kernel->getContainer()->get('test.client');
 
         $client->request("POST", "/comment", array(), array(),
-            array(), '{"id":"e5ea427d-c53d-44df-999","title":"la decouvert du continent ameriquain","description":"par dessus les collines et les riviere","user_id":"32132dsf132ds1f3ds21fsd"}', true);
+            array(), '{"title":"la decouvert du continent ameriquain","description":"par dessus les collines et les riviere","user":"32132dsf132ds1f3ds21fsd"}', true);
 
         $this->assertSame(200, $client->getResponse()->getStatusCode());
 
         //recupere la response la jsondecode , la transforme en string, puis avec le param true je peux utiliser un tab associaatif
-        $contentId = json_decode($client->getResponse()->getContent(), true);
+        $content = json_decode($client->getResponse()->getContent(), true);
 
-        $comment = $em->getRepository(Comment::class)->find($contentId["id"]);
+        $comment = $em->getRepository(Comment::class)->find($content['id']);
 
         $this->assertEquals("la decouvert du continent ameriquain", $comment->getTitle());
         $this->assertEquals("par dessus les collines et les riviere", $comment->getDescription());
@@ -69,17 +68,19 @@ class CommentControllerFunctionalTest extends WebTestCase
     }
 
 
-    public function testModifyCommentAction()
+    public function testModifyCommentFunctionalAction()
     {
         $em = self::$kernel->getContainer()->get('doctrine.orm.entity_manager');
 
         $client = self::$kernel->getContainer()->get('test.client');
 
-        $client->request("PUT", "/modify_comment/654984ds65f1d651f6s5d1f", array(), array(), array(), '{"id":"654984ds65f1d651f6s5d1f","title":"roots","description":"les decouvertes africaine dans le temps","user_id":"32132dsf132ds1f3ds21fsd"}', true);
+        $client->request("PUT", "/modify_comment/654984ds65f1d651f6s5d1f", array(), array(), array(), '{"title":"roots","description":"les decouvertes africaine dans le temps"}', true);
 
         $this->assertSame(200, $client->getResponse()->getStatusCode());
 
-        $comment = $em->getRepository(Comment::class)->findOneBy(["id" => "654984ds65f1d651f6s5d1f"]);
+        $content = json_decode($client->getResponse()->getContent(),true);
+
+        $comment = $em->getRepository(Comment::class)->find($content['id']);
 
         $this->assertEquals("roots", $comment->getTitle());
         $this->assertEquals("les decouvertes africaine dans le temps", $comment->getDescription());
@@ -87,7 +88,7 @@ class CommentControllerFunctionalTest extends WebTestCase
 
     }
 
-    public function testDeleteCommentAction()
+    public function testDeleteCommentFuntionalAction()
     {
         $client = self::$kernel->getContainer()->get('test.client');
 

@@ -2,12 +2,10 @@
 
 namespace App\Controller;
 
-use App\Entity\Comment;
 use App\Entity\User;
 use App\Form\UserFormType;
 use App\Manager\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
-use PHPUnit\Util\Json;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -30,11 +28,12 @@ class UserController
      */
     private $formFactory;
 
+    /**@todo supprimer entitymanager du construct */
     /**
      * @param EntityManagerInterface $entityManager
      * @param UserManager $userManager
      */
-    public function __construct(EntityManagerInterface $entityManager, UserManager $userManager, FormFactoryInterface $formFactory)
+    public function __construct(UserManager $userManager, FormFactoryInterface $formFactory)
     {
         $this->entityManager = $entityManager;
         $this->userManager = $userManager;
@@ -71,11 +70,11 @@ class UserController
      * @param $id
      * @return JsonResponse
      */
-    /**@todo changer le return de la fonction**/
+    /**@todo changer le return de la fonction* */
     public function deleteUserAction($id)
     {
         /** @var User $user */
-        try{
+        try {
             $this->userManager->deleteUser($id);
         } catch (NotFoundHttpException $exception) {
             return new JsonResponse(['error_message' => $exception->getMessage()], $exception->getStatusCode());
@@ -94,8 +93,8 @@ class UserController
     public function createUserAction(Request $request)
     {
         /**je crée mon formlaire a partir de ma class UserFormType
-        Je le soumette et lui envoye ma request
-        true comme 2param pour qu'il me renvoie un tab associatif*/
+         * Je le soumette et lui envoye ma request
+         * true comme 2param pour qu'il me renvoie un tab associatif*/
 
         $form = $this->formFactory->create(UserFormType::class);
         $form->submit(json_decode($request->getContent(), true));
@@ -107,18 +106,23 @@ class UserController
 
         $id = uniqid();
 
-        $this->userManager->createUser($id, $data['firstname'], $data['lastname'],new \DateTime($data['birthday']));
+        $this->userManager->createUser(
+            $id,
+            $data['firstname'],
+            $data['lastname'],
+            new \DateTime($data['birthday']));
 
-        return new JsonResponse($data);
+        return new JsonResponse(array_merge(['id' => $id], $data));
     }
 
     /**
      * @Route("/user/modify/{id}", name="modify_user",methods={"PUT"})
      * @param Request $request
+     * @param $id
      * @return JsonResponse
      */
 
-    public function modifyUserAction(Request $request,$id)
+    public function modifyUserAction(Request $request, $id)
     {
         $form = $this->formFactory->create(UserFormType::class);
         $form->submit(json_decode($request->getContent(), true));
@@ -127,15 +131,15 @@ class UserController
 
         if (!$form->isValid()) {
             return new JsonResponse([(string)
-            $form->getErrors(true)],400);
+            $form->getErrors(true)], 400);
         }
 
         $this->userManager->modifyUser($id,
-                                       $data['firstname'],
-                                       $data['lastname'],
-                         new \DateTime($data['birthday']));
+            $data['firstname'],
+            $data['lastname'],
+            new \DateTime($data['birthday']));
 
-        return new JsonResponse($data);
+        return new JsonResponse(array_merge(['id' => $id], $data));
     }
 
     /**
@@ -144,10 +148,10 @@ class UserController
      */
     public function loadAllUserAction()
     {
-        try{
+        try {
             $tabUser = $this->userManager->loadAllUser();
         } catch (NotFoundHttpException $exception) {
-            return new JsonResponse(['error_message'=>$exception->getMessage()],$exception->getStatusCode());
+            return new JsonResponse(['error_message' => $exception->getMessage()], $exception->getStatusCode());
         }
 
         return new JsonResponse($tabUser);

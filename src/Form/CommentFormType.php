@@ -1,8 +1,8 @@
 <?php
 
+/**@todo changer les namespace**/
 namespace App\Form;
-
-use App\Entity\User;
+use App\Entity\Comment;
 use function Sodium\add;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -11,34 +11,28 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
- * Class UserFormType.
+ * Class CommentFormType.
  */
-class UserFormType extends AbstractType
+class CommentFormType extends AbstractType
 {
     /**
      * {@inheritdoc}
      */
+
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-
-            ->add('lastname', TextType::class, [
+            ->add('title', TextType::class, [
                 'constraints' => [
-                    new NotBlank(['message' => 'The field "lastname" should be not blank.'])
+                    new NotBlank(['message' => 'The field "title" should be not blank.'])
                 ]
             ])
-            ->add("firstname", TextType::class, [
-                 'constraints' => [
-                    new NotBlank(['message' => 'The field "fistname" should be not blank.'])
-                ]
-            ])
-            ->add("birthday", TextType::class, [
+            ->add("description", TextType::class, [
                 'constraints' => [
-                    new NotBlank(['message' => 'The field "birthday" should be not blank.'])
+                    new NotBlank(['message' => 'The field "description" should be not blank.'])
                 ]
-            ])
-
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)
