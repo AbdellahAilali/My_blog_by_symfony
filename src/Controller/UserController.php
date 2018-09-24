@@ -3,117 +3,165 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\UserFormType;
+use App\Manager\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 
 class UserController
 {
     /**
-     * @var EntityManagerInterface
+     * @var UserManager
      */
-    private $entityManager;
+    private $userManager;
+    /**
+     * @var FormFactoryInterface
+     */
+    private $formFactory;
 
     /**
-     * @param EntityManagerInterface $entityManager
+     * @param FormFactoryInterface $formFactory
+     * @param UserManager $userManager
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(UserManager $userManager, FormFactoryInterface $formFactory)
     {
-        $this->entityManager = $entityManager;
+        $this->userManager = $userManager;
+        $this->formFactory = $formFactory;
     }
 
     /**
-     * @Route ("/user/{lastName}", name="load_user", methods={"GET"})
+     * @return JsonResponse
+     * @Route ("/", name="user_all", methods={"GET"})
+     */
+    public function loadAllUserAction()
+    {
+        try {
+            $tabUser = $this->userManager->loadAllUser();
+        } catch (NotFoundHttpException $exception) {
+
+            return new JsonResponse(['error_message' =>
+                $exception->getMessage()],
+                $exception->getStatusCode());
+        }
+
+        return new JsonResponse($tabUser);
+    }
+
+    /**
+     * @Route ("/user/{id}", name="load_user", methods={"GET"})
      *
-     * @param string $lastName
+     * @param string $id
      *
      * @return JsonResponse
      */
-    public function loadUserAction($lastName)
+
+    public function loadUserAction($id)
     {
-        /** @var User $user */
-        $user = $this->entityManager
-            ->getRepository(User::class)
-            ->findOneBy(["lastname" => $lastName]);
+        /**Pour récuperer une exception avant symfony.
+         * J'utilise un try pour demander d'essayer d'executer le try ,si le try n'est pas executer je passe au catch,
+         * qui ne récupere que les erreurs NotFoundException et les enregistres dans $exception
+         * et lui demande d'afficher le message d'erreur et le statuscode
+         */
+        try {
+            $result = $this->userManager->loadUser($id);
 
-        if (empty($user)) {
-            return new JsonResponse(null, 404);
+        } catch (NotFoundHttpException $exception) {
+
+            return new JsonResponse(['error_message' =>
+                $exception->getMessage()],
+                $exception->getStatusCode());
+
         }
 
-        $result = [];
-        $result["firstname"] = $user->getFirstname();
-        $result["getLastname"] = $user->getLastname();
-
-        $tabComments = [];
-        foreach ($user->getComments() as $comment) {
-            $tabComments[] = [
-                "title" => $comment->getTitle(),
-                "comment" => $comment->getDescription()
-            ];
-        }
-        $result["comments"] = $tabComments;
         return new JsonResponse($result);
     }
 
 
     /**
-     * @Route ("/user/{lastname}", name="delete_user", methods={"DELETE"})
-     * @param $lastName
+     * @Route ("/user_delete/{id}", name="user_delete", methods={"DELETE"})
+     * @param $id
      * @return JsonResponse
      */
-    public function deleteUser($lastName)
+    /**@todo changer le return de la fonction* */
+    public function deleteUserAction($id)
     {
-        $user = $this->entityManager->getRepository(User::class)
-            ->findOneBy(["lastname" => $lastName]);
-
-
-        if (empty($user)) {
-            return new JsonResponse("no", 404);
+        /** @var User $user */
+        try {
+            $this->userManager->deleteUser($id);
+        } catch (NotFoundHttpException $exception) {
+            return new JsonResponse(['error_message' =>
+                $exception->getMessage()],
+                $exception->getStatusCode());
         }
 
-        $this->entityManager->remove($user);
-        $this->entityManager->flush();
-
-        return new JsonResponse("ok", 200);
-
-
+        return new JsonResponse();
     }
 
 
     /**
-     * @Route ("/user/", name="create_user", methods={"POST"})
+     * @Route ("/user", name="create_user", methods={"POST"})
      * @param Request $request
      * @return JsonResponse
      */
-
     public function createUserAction(Request $request)
     {
-        $resultJson = $request->getContent();
+        /**je crée mon formlaire a partir de ma class UserFormType
+         * Je le soumette et lui envoye ma request
+         * true comme 2param pour qu'il me renvoie un tab associatif*/
 
-        $result = json_decode($resultJson);
+        $form = $this->formFactory
+            ->create(UserFormType::class);
 
-        //utilisationde la class stdClass pour avoir
-        // acces au valeurs  decode
+        $form->submit(json_decode($request->getContent(), true));
 
-        $lastname = $result->lastname;
-        $firstname = $result->firstname;
-        $date = new \DateTime($result->dateNaissance);
+        $data = $form->getData();
+        if (!$form->isValid()) {
+            echo 'empty';
+            return new JsonResponse([(string)
+            $form->getErrors(true)], 400);
+        }
 
-        $newUser = new User();
-        $newUser->setLastname($lastname);
-        $newUser->setFirstname($firstname);
-        $newUser->setDateNaissance($date);
+        $id = uniqid();
+        $this->userManager->createUser(
+            $id,
+            $data['firstname'],
+            $data['lastname'],
+            new \DateTime($data['birthday']));
 
-        $em = $this->entityManager;
-
-        $em->persist($newUser);
-
-        $em->flush();
-
-        return new JsonResponse();
-
+        return new JsonResponse(array_merge(['id' => $id], $data));
     }
+
+    /**
+     * @Route("/user/modify/{id}", name="modify_user",methods={"PUT"})
+     * @param Request $request
+     * @param $id
+     * @return JsonResponse
+     */
+
+    public function modifyUserAction(Request $request, $id)
+    {
+        $form = $this->formFactory->create(UserFormType::class);
+        $form->submit(json_decode($request->getContent(), true));
+
+        $data = $form->getData();
+
+        if (!$form->isValid()) {
+            return new JsonResponse([(string)
+            $form->getErrors(true)], 400);
+        }
+
+        $this->userManager->modifyUser($id,
+            $data['firstname'],
+            $data['lastname'],
+            new \DateTime($data['birthday']));
+
+        return new JsonResponse(array_merge(['id' => $id], $data));
+    }
+
 
 
 }

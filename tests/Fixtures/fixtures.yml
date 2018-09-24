@@ -1,9 +1,42 @@
 App\Entity\User:
     user.1:
-        lastname: 'Ailali'
-        firstname: 'Abdellah'
-        date_naissance: '<date_create()>'
+        __construct:
+          - "32132dsf132ds1f3ds21fsd"
+          - 'Abdellah'
+          - 'Ailali'
+          - '<date_create()>'
     user.2:
-        lastname: 'john'
-        firstname: 'Doe'
-        date_naissance: '<date_create()>'
+        __construct:
+          - "025caf9e-e6e6-4aac-a45b"
+          - 'John'
+          - 'Doe'
+          - '<date_create()>'
+    user.3:
+        __construct:
+          - "4eb298dd-5cd7-4d10-9b9q"
+          - 'Malik'
+          - 'Ben'
+          - '<date_create()>'
+
+App\Entity\Comment:
+    comment.1:
+        __construct:
+          - "654984ds65f1d651f6s5d1f"
+          - "Le château ambulant"
+          - "La jeune Sophie, âgée de 18 ans, travaille sans relâche dans la boutique de chapelier que tenait son père avant de mourir. Lors de l'une de ses rares sorties en ville, elle fait la connaissance de Hauru le Magicien"
+          - '@user.1'
+    comment.2:
+        __construct:
+          - "78940a8b-50db-4720-9a7d"
+          - "Le voyage de Chihiro"
+          - "Une fillette de 10 ans, prise au piège dans une maison sur la plage hantee par des esprits et des fantômes, doit combattre sorcières et dragons"
+          - '@user.2'
+    comment.3:
+        __construct:
+          - "c6d90297-d196-4d31-ab93"
+          - "Kill Bill"
+          - "Condamnee à mort par son propre patron Bill, une femme-assassin survit à une balle dans la tête.  Quatre ans plus tard elle sort du coma et jure d’avoir sa vengeance.… "
+          - '@user.3'
+
+
+

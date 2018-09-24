@@ -1,0 +1,18 @@
+default:
+    extensions:
+        Behat\Symfony2Extension:
+          kernel:
+            bootstrap: features/bootstrap/bootstrap.php
+            class: App\Kernel
+
+
+        Ubirak\RestApiBehatExtension\Extension:
+            rest:
+                base_url: http://localhost:8000
+                store_response: true
+    suites:
+        default:
+            contexts:
+                - Ubirak\RestApiBehatExtension\RestApiContext
+                - Ubirak\RestApiBehatExtension\Json\JsonContext
+                - FeatureContext

@@ -4,7 +4,9 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\DateType;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints\Date;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
@@ -13,8 +15,8 @@ class User
 {
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\Column(type="string", length=65)
      */
     private $id;
 
@@ -29,21 +31,50 @@ class User
     private $firstname;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="date")
      */
-    private $date_naissance;
+    private $birthday;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="user", orphanRemoval=true)
      */
     private $comments;
 
-    public function __construct()
+    /**
+     * @param string             $id
+     * @param string             $firstName
+     * @param string             $lastName
+     * @param \DateTimeInterface $birthDay
+     */
+    public function __construct(string $id, string $firstName, string $lastName, \DateTimeInterface $birthDay)
     {
+        $this->id = $id;
+        $this->firstname = $firstName;
+        $this->lastname = $lastName;
+        $this->birthday = $birthDay;
+
         $this->comments = new ArrayCollection();
     }
 
+    /**
+     * @param string             $firstName
+     * @param string             $lastName
+     * @param \DateTimeInterface $birthDay
+     */
+    public function update(string $firstName, string $lastName, \DateTimeInterface $birthDay)
+    {
+        $this->firstname = $firstName;
+        $this->lastname = $lastName;
+        $this->birthday = $birthDay;
+    }
 
+    /**
+     * @param $id
+     */
+    public function setId(string $id)
+    {
+        $this->id = $id;
+    }
 
     public function getId()
     {
@@ -74,14 +105,14 @@ class User
         return $this;
     }
 
-    public function getDateNaissance(): ?\DateTimeInterface
+    public function getBirthday(): ?\DateTime
     {
-        return $this->date_naissance;
+        return $this->birthday;
     }
 
-    public function setDateNaissance(\DateTimeInterface $date_naissance): self
+    public function setBirthday(\DateTime $birthday): self
     {
-        $this->date_naissance = $date_naissance;
+        $this->birthday = $birthday;
 
         return $this;
     }
