@@ -56,11 +56,11 @@ class CommentController
         }
 
         $id = uniqid();
-        $this->commmentManager->createComment($id, $data['title'], $data['description'],$data['user']) ;
+        $this->commmentManager->createComment($id, $data['title'], $data['description'], $data['user']) ;
 
-        return new JsonResponse(array_merge(['id' => $id], $data));
-
+        return new JsonResponse(['id' => $id, 'title' => $data['title'], 'description' => $data['description'], 'user' => $data['user']->getId()]);
     }
+
     /**
      * @todo  modifier nom des routes, rajouter une sortie erreur
      */

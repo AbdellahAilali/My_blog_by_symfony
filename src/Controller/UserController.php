@@ -15,11 +15,6 @@ use Symfony\Component\HttpFoundation\Request;
 class UserController
 {
     /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
      * @var UserManager
      */
     private $userManager;
@@ -28,16 +23,32 @@ class UserController
      */
     private $formFactory;
 
-    /**@todo supprimer entitymanager du construct */
     /**
-     * @param EntityManagerInterface $entityManager
+     * @param FormFactoryInterface $formFactory
      * @param UserManager $userManager
      */
     public function __construct(UserManager $userManager, FormFactoryInterface $formFactory)
     {
-        $this->entityManager = $entityManager;
         $this->userManager = $userManager;
         $this->formFactory = $formFactory;
+    }
+
+    /**
+     * @return JsonResponse
+     * @Route ("/", name="user_all", methods={"GET"})
+     */
+    public function loadAllUserAction()
+    {
+        try {
+            $tabUser = $this->userManager->loadAllUser();
+        } catch (NotFoundHttpException $exception) {
+
+            return new JsonResponse(['error_message' =>
+                $exception->getMessage()],
+                $exception->getStatusCode());
+        }
+
+        return new JsonResponse($tabUser);
     }
 
     /**
@@ -57,8 +68,13 @@ class UserController
          */
         try {
             $result = $this->userManager->loadUser($id);
+
         } catch (NotFoundHttpException $exception) {
-            return new JsonResponse(['error_message' => $exception->getMessage()], $exception->getStatusCode());
+
+            return new JsonResponse(['error_message' =>
+                $exception->getMessage()],
+                $exception->getStatusCode());
+
         }
 
         return new JsonResponse($result);
@@ -77,11 +93,12 @@ class UserController
         try {
             $this->userManager->deleteUser($id);
         } catch (NotFoundHttpException $exception) {
-            return new JsonResponse(['error_message' => $exception->getMessage()], $exception->getStatusCode());
+            return new JsonResponse(['error_message' =>
+                $exception->getMessage()],
+                $exception->getStatusCode());
         }
 
-
-        return new JsonResponse("ok", 200);
+        return new JsonResponse();
     }
 
 
@@ -96,16 +113,19 @@ class UserController
          * Je le soumette et lui envoye ma request
          * true comme 2param pour qu'il me renvoie un tab associatif*/
 
-        $form = $this->formFactory->create(UserFormType::class);
+        $form = $this->formFactory
+            ->create(UserFormType::class);
+
         $form->submit(json_decode($request->getContent(), true));
 
         $data = $form->getData();
         if (!$form->isValid()) {
-            return new JsonResponse([(string)$form->getErrors(true)], 400);
+            echo 'empty';
+            return new JsonResponse([(string)
+            $form->getErrors(true)], 400);
         }
 
         $id = uniqid();
-
         $this->userManager->createUser(
             $id,
             $data['firstname'],
@@ -142,20 +162,6 @@ class UserController
         return new JsonResponse(array_merge(['id' => $id], $data));
     }
 
-    /**
-     * @return JsonResponse
-     * @Route ("/userAll", name="user_all", methods={"GET"})
-     */
-    public function loadAllUserAction()
-    {
-        try {
-            $tabUser = $this->userManager->loadAllUser();
-        } catch (NotFoundHttpException $exception) {
-            return new JsonResponse(['error_message' => $exception->getMessage()], $exception->getStatusCode());
-        }
-
-        return new JsonResponse($tabUser);
-    }
 
 
 }

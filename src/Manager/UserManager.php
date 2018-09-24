@@ -117,7 +117,7 @@ class UserManager
         $users = $this->entityManager->getRepository(User::class)->findAll();
 
         if (empty($users)) {
-            throw new NotFoundHttpException('Users not foundr');
+            throw new NotFoundHttpException('Users not found');
         }
 
         $tabUser = [];
@@ -131,12 +131,12 @@ class UserManager
                 "birthday" => $user->getBirthday()->format('Y-m-d'),
             ];
 
-            foreach ($user->getComments() as $comment) {
+            /*foreach ($user->getComments() as $comment) {
                 $tabUser[$key]['comments'][] = [
                     "title" => $comment->getTitle(),
                     "comment" => $comment->getDescription()
                 ];
-            }
+            }*/
         }
 
         return $tabUser;

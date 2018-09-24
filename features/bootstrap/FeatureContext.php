@@ -4,8 +4,9 @@ use Behat\Behat\Context\Context;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Symfony\Component\HttpKernel\KernelInterface;
 use \Behat\Symfony2Extension\Context\KernelDictionary;
+
+
 
 /**
  * Defines application features from the specific context.
@@ -19,8 +20,6 @@ class FeatureContext implements Context, KernelAwareContext
      */
     public function setUp()
     {
-        echo '--------------------------------------------';
-
         $kernel = $this->getKernel();
 
         $em = $kernel->getContainer()->get('doctrine.orm.entity_manager');
@@ -29,7 +28,7 @@ class FeatureContext implements Context, KernelAwareContext
 
         //DIR specisie le fichier sur lequel je suis.
         $loader = new \Nelmio\Alice\Loader\NativeLoader();
-        $objectSet = $loader->loadFile(__DIR__ . '/../../tests/Fixtures/fixtures.yml')->getObjects();
+        $objectSet = $loader->loadFile(__DIR__ . '/../fixtures/yml')->getObjects();
 
         foreach ($objectSet as $object) {
             $em->persist($object);
@@ -54,6 +53,7 @@ class FeatureContext implements Context, KernelAwareContext
 
         $tool->dropSchema($classes);
         $tool->createSchema($classes);
+        $tool->updateSchema($classes);
     }
 
 }

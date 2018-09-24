@@ -33,15 +33,11 @@ class CommentManager
      * @param string $id
      * @param string $title
      * @param string $description
-     * @param User $userId
+     * @param User $user
      */
-    public function createComment(string $id,string $title,string $description, User $userId)
+    public function createComment(string $id,string $title,string $description, User $user)
     {
-        /**@var User $userId*/
-
-        $this->entityManager->getRepository(User::class)->find($userId);
-
-        $comment = new Comment($id, $title, $description, $userId);
+        $comment = new Comment($id, $title, $description, $user);
 
         $this->entityManager->persist($comment);
 
