@@ -77,7 +77,7 @@ class CommentController
         $form->submit(json_decode($request->getContent(), true));
 
         $data = $form->getData();
-
+        dump($data);
         if (!$form->isValid()) {
             return new JsonResponse([(string)
             $form->getErrors(true)], 400);

@@ -120,7 +120,7 @@ class UserManager
             throw new NotFoundHttpException('Users not found');
         }
 
-        $tabUser = [];
+        /*$tabUser = [];*/
 
         foreach ($users as $key => $user) {
 
@@ -131,16 +131,17 @@ class UserManager
                 "birthday" => $user->getBirthday()->format('Y-m-d'),
             ];
 
-            /*foreach ($user->getComments() as $comment) {
+            foreach ($user->getComments() as $comment) {
                 $tabUser[$key]['comments'][] = [
                     "title" => $comment->getTitle(),
                     "comment" => $comment->getDescription()
                 ];
-            }*/
+            }
         }
 
         return $tabUser;
     }
+
 
 }
 

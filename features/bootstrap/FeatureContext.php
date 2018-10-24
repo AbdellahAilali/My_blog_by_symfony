@@ -28,7 +28,7 @@ class FeatureContext implements Context, KernelAwareContext
 
         //DIR specisie le fichier sur lequel je suis.
         $loader = new \Nelmio\Alice\Loader\NativeLoader();
-        $objectSet = $loader->loadFile(__DIR__ . '/../fixtures/yml')->getObjects();
+        $objectSet = $loader->loadFile(__DIR__ . '/../../tests/Fixtures/fixtures.yml')->getObjects();
 
         foreach ($objectSet as $object) {
             $em->persist($object);

@@ -84,6 +84,7 @@ class UserControllerTest extends TestCase
 
         $mockFormFactoryInterface = $this->createMock(FormFactoryInterface::class);
 
+
         $objUserController = new UserController($mockUserManager, $mockFormFactoryInterface);
 
         $actual = $objUserController->deleteUserAction("5b683d97a6f2f");

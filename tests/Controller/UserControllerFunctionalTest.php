@@ -104,18 +104,21 @@ class UserControllerFunctionalTest extends WebTestCase
 
     }
 
+    /**
+     * ici
+     */
     public function testLoadAllUserFunctionalAction()
     {
 
         $client = self::$kernel->getContainer()->get('test.client');
 
-        $client->request("GET", "/userAll");
+        $client->request("GET", "/");
 
         $this->assertSame(200, $client->getResponse()->getStatusCode());
 
         $response = $client->getResponse();
 
-        $expected ='[{"id":"025caf9e-e6e6-4aac-a45b","firstname":"John","lastname":"Doe","birthday":"2018-08-13","comments":[{"title":"Le voyage de Chihiro","comment":"Une fillette de 10 ans, prise au pi\u00e8ge dans une maison sur la plage hantee par des esprits et des fant\u00f4mes, doit combattre sorci\u00e8res et dragons"}]},{"id":"32132dsf132ds1f3ds21fsd","firstname":"Abdellah","lastname":"Ailali","birthday":"2018-08-13","comments":[{"title":"Le ch\u00e2teau ambulant","comment":"La jeune Sophie, \u00e2g\u00e9e de 18 ans, travaille sans rel\u00e2che dans la boutique de chapelier que tenait son p\u00e8re avant de mourir. Lors de l\u0027une de ses rares sorties en ville, elle fait la connaissance de Hauru le Magicien"}]},{"id":"4eb298dd-5cd7-4d10-9b9q","firstname":"Malik","lastname":"Ben","birthday":"2018-08-13","comments":[{"title":"Kill Bill","comment":"Condamnee \u00e0 mort par son propre patron Bill, une femme-assassin survit \u00e0 une balle dans la t\u00eate.  Quatre ans plus tard elle sort du coma et jure d\u2019avoir sa vengeance.\u2026 "}]}]';
+        $expected ='[{"id":"025caf9e-e6e6-4aac-a45b","firstname":"John","lastname":"Doe","birthday":"2018-10-08","comments":[{"title":"Le voyage de Chihiro","comment":"Une fillette de 10 ans, prise au pi\u00e8ge dans une maison sur la plage hantee par des esprits et des fant\u00f4mes, doit combattre sorci\u00e8res et dragons"}]},{"id":"32132dsf132ds1f3ds21fsd","firstname":"Abdellah","lastname":"Ailali","birthday":"2018-10-08","comments":[{"title":"Le ch\u00e2teau ambulant","comment":"La jeune Sophie, \u00e2g\u00e9e de 18 ans, travaille sans rel\u00e2che dans la boutique de chapelier que tenait son p\u00e8re avant de mourir. Lors de l\u0027une de ses rares sorties en ville, elle fait la connaissance de Hauru le Magicien"}]},{"id":"4eb298dd-5cd7-4d10-9b9q","firstname":"Malik","lastname":"Ben","birthday":"2018-10-08","comments":[{"title":"Kill Bill","comment":"Condamnee \u00e0 mort par son propre patron Bill, une femme-assassin survit \u00e0 une balle dans la t\u00eate.  Quatre ans plus tard elle sort du coma et jure d\u2019avoir sa vengeance.\u2026 "}]}]';
 
         $this->assertEquals($expected, $response->getContent());
     }
