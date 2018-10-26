@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: abdellah
- * Date: 19/07/18
- * Time: 17:01
- */
 
 namespace Test\Controller;
 
@@ -23,7 +17,8 @@ class CommentControllerFunctionalTest extends WebTestCase
 {
     protected function setUp()
     {
-        //** @var PersistentObject persist,flush */
+        /** @var PersistentObject persist,flush */
+        /** @var EntityManager $em */
 
         static::createClient();
 

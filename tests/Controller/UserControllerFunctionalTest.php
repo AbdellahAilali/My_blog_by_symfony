@@ -6,6 +6,7 @@ use App\Entity\User;
 use Doctrine\Common\Persistence\PersistentObject;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use phpDocumentor\Reflection\Types\Self_;
 use PHPUnit\Util\Json;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit;
@@ -20,7 +21,7 @@ class UserControllerFunctionalTest extends WebTestCase
     {
         /** @var PersistentObject persist,flush */
 
-        static::createClient();
+        self::createClient();
 
         $em = self::$kernel->getContainer()->get('doctrine.orm.entity_manager');
 

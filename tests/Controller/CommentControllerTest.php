@@ -1,28 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: abdellah
- * Date: 20/07/18
- * Time: 10:49
- */
 
 namespace Test\Controller;
 
-
 use App\Controller\CommentController;
-use App\Entity\Comment;
+use App\Entity\User;
 use App\Manager\CommentManager;
 use PHPUnit\Framework\TestCase;
-use App\Entity\User;
-use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\ORM\EntityManager;
-use Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\TestServiceContainer\UnusedPrivateService;
-use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-
 
 class CommentControllerTest extends TestCase
 {
@@ -35,8 +22,8 @@ class CommentControllerTest extends TestCase
         ];
 
         $mockRequest = $this->createMock(Request::class);
-        $mockFormFactory =$this->createMock(FormFactoryInterface::class);
-        $mockForm =$this->createMock(FormInterface::class);
+        $mockFormFactory = $this->createMock(FormFactoryInterface::class);
+        $mockForm = $this->createMock(FormInterface::class);
         $mockCommentManager = $this->createMock(CommentManager::class);
 
         $mockRequest
@@ -84,21 +71,14 @@ class CommentControllerTest extends TestCase
         $this->assertEquals('b0e047b9-d1a6-4610-bbad-e2fb77f3b7de', $content['user']);
     }
 
-  public function testModifyCommentAction()
+    public function testModifyCommentAction()
     {
-        $requestData = [
-            'id'=> 'b0e047b9-d1a6-4610-bbad-e2fb77f3b7de',
-            'title' => 'My simple comment',
-            'description' => 'My simple description',
-            'user' => '36fb3b5c-da75-4e4c-8697-8b83460b1a55'
-        ];
-
-        $mockFormFactory =$this->createMock(FormFactoryInterface::class);
-        $mockForm =$this->createMock(FormInterface::class);
+        $mockFormFactoryInterface = $this->createMock(FormFactoryInterface::class);
+        $mockForm = $this->createMock(FormInterface::class);
         $mockCommentManager = $this->createMock(CommentManager::class);
         $mockRequest = $this->createMock(Request::class);
 
-        $mockFormFactory
+        $mockFormFactoryInterface
             ->expects($this->once())
             ->method('create')
             ->willReturn($mockForm);
@@ -106,54 +86,50 @@ class CommentControllerTest extends TestCase
         $mockForm
             ->expects($this->once())
             ->method('submit')
-            ->willReturn(['id'=>'b0e047b9-d1a6-4610-bbad-e2fb77f3b7de', 'title'=>'title2', 'description'=>'desc2','36fb3b5c-da75-4e4c-8697-8b83460b1a55']);
+            ->willReturn($mockRequest);
 
         $mockRequest
             ->expects($this->once())
             ->method("getContent")
-            ->willReturn(json_encode($requestData));
+            ->willReturn("{'title':'My complex comment','description':'My complex description'}");
 
         $mockForm
             ->expects($this->once())
             ->method("getData")
-            ->willReturn($requestData);
+            ->willReturn(['title' => 'My complex comment', 'description' => 'My complex description']);
 
-        $comment = new CommentController($mockCommentManager,$mockFormFactory);
+        $mockForm
+            ->expects($this->once())
+            ->method('isValid')
+            ->willReturn(true);
 
-        $content = $comment->modifyCommentAction($mockRequest,'b0e047b9-d1a6-4610-bbad-e2fb77f3b7de');
+        $comment = new CommentController($mockCommentManager, $mockFormFactoryInterface);
 
-        $this->assertEquals(new JsonResponse(), $content);
+        $actual = $comment->modifyCommentAction($mockRequest, '5bd07aed1357d');
+
+        $expected = '{"id":"5bd07aed1357d","title":"My complex comment","description":"My complex description"}';
+
+        $this->assertEquals($expected, $actual->getContent());
+        $this->assertEquals(200, $actual->getStatusCode());
     }
 
-   /* public function testDeleteCommentAction()
+    public function testDeleteCommentAction()
     {
-        $mockEntity = $this->createMock(EntityManager::class);
-        $mockRepo = $this->createMock(ObjectRepository::class);
+        $mockCommentManager = $this->createMock(CommentManager::class);
+        $mockFormFactoryInterface = $this->createMock(FormFactoryInterface::class);
 
-        $mockRepo
+        $mockCommentManager
             ->expects($this->once())
-            ->method("find")
-            ->willReturn(new Comment());
+            ->method('deleteComment');
 
-        $mockEntity
-            ->expects($this->once())
-            ->method("getRepository")
-            ->willReturn($mockRepo);
+        $comment = new CommentController($mockCommentManager, $mockFormFactoryInterface);
 
-        $mockEntity
-            ->expects($this->once())
-            ->method("remove");
+        $actual = $comment->deleteCommentAction('5bd07aed1357d');
 
-        $mockEntity
-            ->expects($this->once())
-            ->method("flush");
+        $this->assertEquals(200, $actual->getStatusCode());
+        $this->assertInstanceOf(JsonResponse::class, $actual);
 
-        $comment = new CommentController($mockEntity);
 
-        $content = $comment->deleteCommentAction("commentaire1");
-
-        $this->assertEquals(new JsonResponse(), $content);
-
-    }*/
+    }
 
 }

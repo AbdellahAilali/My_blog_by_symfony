@@ -42,7 +42,7 @@ class UserManager
         $this->entityManager->flush();
     }
 
-    /**
+    /**entityManager
      * @param string $id
      * @param string $firstName
      * @param string $lastName
@@ -51,13 +51,8 @@ class UserManager
     public function modifyUser(string $id, string $firstName, string $lastName, \DateTimeInterface $birthDay)
     {
         /** @var User $user */
-        //je vais chercher mon objet user par l'id
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['id' => $id]);
 
-        /**
-         * j'utilise ma fonction upadte qui se trouve dans ma class User
-         *je lui donne des parammétre pour leurs affécter de nouvelles valeurs
-         **/
         $user->update($firstName, $lastName, $birthDay);
 
         $this->entityManager->persist($user);
@@ -103,7 +98,7 @@ class UserManager
         foreach ($user->getComments() as $comment) {
             $tabComments[] = [
                 "title" => $comment->getTitle(),
-                "comment" => $comment->getDescription()
+                "description" => $comment->getDescription()
             ];
         }
         $result["comments"] = $tabComments;
@@ -120,7 +115,7 @@ class UserManager
             throw new NotFoundHttpException('Users not found');
         }
 
-        /*$tabUser = [];*/
+        $tabUser = [];
 
         foreach ($users as $key => $user) {
 
@@ -138,7 +133,6 @@ class UserManager
                 ];
             }
         }
-
         return $tabUser;
     }
 
