@@ -1,17 +1,15 @@
 <?php
 
 namespace App\Controller;
-/*header('Access-Control-Allow-Origin: *');*/
 
 use App\Entity\User;
 use App\Form\UserFormType;
 use App\Manager\UserManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Request;
 
 class UserController
 {

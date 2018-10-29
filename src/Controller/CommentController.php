@@ -16,7 +16,7 @@ class CommentController
 {
 
     /**
-     * @var FormFactory
+     * @var FormFactoryInterface
      */
     private $formFactory;
     /**
@@ -55,21 +55,17 @@ class CommentController
     }
 
     /**
-     * @todo  modifier nom des routes, rajouter une sortie erreur
-     */
-    /**
      * @route("/modify_comment/{id}", name="modify_comment", methods={"PUT"})
-     * @param $id
+     *
      * @param Request $request
+     * @param         $id
+     *
      * @return JsonResponse
      */
-
     public function modifyCommentAction(Request $request, $id)
     {
         $form = $this->formFactory->create(CommentFormType::class);
         $form->submit(json_decode($request->getContent(), true));
-
-
 
         $data = $form->getData();
 

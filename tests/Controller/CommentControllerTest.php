@@ -6,130 +6,227 @@ use App\Controller\CommentController;
 use App\Entity\User;
 use App\Manager\CommentManager;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\FormErrorIterator;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CommentControllerTest extends TestCase
 {
-    public function testCreateCommentAction()
+    private $mockRequest;
+    private $mockFormFactoryInterface;
+    private $mockFormInterface;
+    private $mockCommentManager;
+    private $commentController;
+
+    public function __construct(?string $name = null, array $data = [], string $dataName = '')
     {
-        $requestData = [
-            'title' => 'My simple comment',
-            'description' => 'My simple description',
-            'user' => '36fb3b5c-da75-4e4c-8697-8b83460b1a55'
-        ];
-
-        $mockRequest = $this->createMock(Request::class);
-        $mockFormFactory = $this->createMock(FormFactoryInterface::class);
-        $mockForm = $this->createMock(FormInterface::class);
-        $mockCommentManager = $this->createMock(CommentManager::class);
-
-        $mockRequest
-            ->expects($this->once())
-            ->method("getContent")
-            ->willReturn(json_encode($requestData));
-
-        $formData = $requestData;
-        $formData['user'] = new User('b0e047b9-d1a6-4610-bbad-e2fb77f3b7de', 'Ailalai', 'Abdellah', new \DateTime());
-        $mockForm
-            ->expects($this->once())
-            ->method('getData')->willReturn($formData);
-
-        $mockForm
-            ->expects($this->once())
-            ->method('isValid')->willReturn(true);
-
-        $mockFormFactory
-            ->expects($this->once())
-            ->method('create')->willReturn($mockForm);
-
-        $mockCommentManager
-            ->expects($this->once())
-            ->method('createComment')->with(
-                $this->isType('string'),
-                $formData['title'],
-                $formData['description'],
-                $formData['user']
-            );
-
-        $objComment = new CommentController($mockCommentManager, $mockFormFactory);
-        $response = $objComment->createCommentAction($mockRequest);
-
-        $content = json_decode($response->getContent(), true);
-
-
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertArrayHasKey('id', $content);
-        $this->assertArrayHasKey('title', $content);
-        $this->assertArrayHasKey('description', $content);
-        $this->assertArrayHasKey('user', $content);
-
-        $this->assertEquals('My simple comment', $content['title']);
-        $this->assertEquals('My simple description', $content['description']);
-        $this->assertEquals('b0e047b9-d1a6-4610-bbad-e2fb77f3b7de', $content['user']);
+        parent::__construct($name, $data, $dataName);
+        $this->mockRequest = $this->createMock(Request::class);
+        $this->mockFormFactoryInterface = $this->createMock(FormFactoryInterface::class);
+        $this->mockFormInterface = $this->createMock(FormInterface::class);
+        $this->mockCommentManager = $this->createMock(CommentManager::class);
+        $this->commentController = new CommentController($this->mockCommentManager, $this->mockFormFactoryInterface);
     }
 
-    public function testModifyCommentAction()
+    public function testCreateCommentAction()
     {
-        $mockFormFactoryInterface = $this->createMock(FormFactoryInterface::class);
-        $mockForm = $this->createMock(FormInterface::class);
-        $mockCommentManager = $this->createMock(CommentManager::class);
-        $mockRequest = $this->createMock(Request::class);
+        $requestGetData = ["title" => "My Title PNL", "description" => "My description", "user" => "36fb3b5c-da75-4e4c-8697-8b83460b1a55"];
 
-        $mockFormFactoryInterface
+        $this->mockFormFactoryInterface
             ->expects($this->once())
             ->method('create')
-            ->willReturn($mockForm);
+            ->willReturn($this->mockFormInterface);
 
-        $mockForm
+        $this->mockFormInterface
             ->expects($this->once())
             ->method('submit')
-            ->willReturn($mockRequest);
+            ->willReturn($this->mockRequest);
 
-        $mockRequest
+        $this->mockRequest
             ->expects($this->once())
-            ->method("getContent")
-            ->willReturn("{'title':'My complex comment','description':'My complex description'}");
+            ->method('getContent')
+            ->willReturn($this->mockRequest);
 
-        $mockForm
+        $data = $requestGetData;
+        $data['user'] = new User("36fb3b5c-da75-4e4c-8697-8b83460b1a55", "Johnn", 'Doe', new \DateTime());
+
+        $this->mockFormInterface
             ->expects($this->once())
-            ->method("getData")
-            ->willReturn(['title' => 'My complex comment', 'description' => 'My complex description']);
+            ->method('getData')
+            ->willReturn($data);
 
-        $mockForm
+        $this->mockFormInterface
             ->expects($this->once())
             ->method('isValid')
             ->willReturn(true);
 
-        $comment = new CommentController($mockCommentManager, $mockFormFactoryInterface);
+        $commentController = new CommentController($this->mockCommentManager, $this->mockFormFactoryInterface);
 
-        $actual = $comment->modifyCommentAction($mockRequest, '5bd07aed1357d');
+        $actual = $commentController->createCommentAction($this->mockRequest);
 
-        $expected = '{"id":"5bd07aed1357d","title":"My complex comment","description":"My complex description"}';
+        $actualGetContent = json_decode($actual->getContent(), true);
+
+        $this->assertInstanceOf(JsonResponse::class, $actual);
+        $this->assertEquals(200, $actual->getStatusCode());
+        $this->assertEquals('My Title PNL', $actualGetContent["title"]);
+        $this->assertEquals('My description', $actualGetContent["description"]);
+        $this->assertEquals('36fb3b5c-da75-4e4c-8697-8b83460b1a55', $actualGetContent["user"]);
+    }
+
+    public function testCreateCommentActionError()
+    {
+        $mockFormErrorIteratoe = $this->createMock(FormErrorIterator::class);
+
+        $this->mockFormFactoryInterface
+            ->expects($this->once())
+            ->method('create')
+            ->willReturn($this->mockFormInterface);
+
+        $this->mockFormInterface
+            ->expects($this->once())
+            ->method('submit')
+            ->willReturn($this->mockRequest);
+
+        $this->mockRequest
+            ->expects($this->once())
+            ->method('getContent')
+            ->willReturn('{}');
+
+        $this->mockFormInterface
+            ->expects($this->once())
+            ->method('getData')
+            ->willReturn([]);
+
+        $this->mockFormInterface
+            ->expects($this->once())
+            ->method('isValid')
+            ->willReturn(false);
+
+        $this->mockFormInterface
+            ->expects($this->once())
+            ->method('getErrors')
+            ->willReturn($mockFormErrorIteratoe);
+
+        $actual = $this->commentController->createCommentAction($this->mockRequest);
+
+        $this->assertInstanceOf(JsonResponse::class, $actual);
+        $this->assertEquals(400, $actual->getStatusCode());
+
+    }
+
+    public function testModifyCommentAction()
+    {
+        $this->mockFormFactoryInterface
+            ->expects($this->once())
+            ->method('create')
+            ->willReturn($this->mockFormInterface);
+
+        $this->mockFormInterface
+            ->expects($this->once())
+            ->method('submit')
+            ->willReturn($this->mockRequest);
+
+        $this->mockRequest
+            ->expects($this->once())
+            ->method("getContent")
+            ->willReturn("{'title':'My complex Title','description':'My complex description'}");
+
+        $this->mockFormInterface
+            ->expects($this->once())
+            ->method("getData")
+            ->willReturn(['title' => 'My complex Title', 'description' => 'My complex description']);
+
+        $this->mockFormInterface
+            ->expects($this->once())
+            ->method('isValid')
+            ->willReturn(true);
+
+        $actual = $this->commentController->modifyCommentAction($this->mockRequest, 'c6d90297-d196-4d31-ab93');
+
+        $expected = '{"id":"c6d90297-d196-4d31-ab93","title":"My complex Title","description":"My complex description"}';
 
         $this->assertEquals($expected, $actual->getContent());
         $this->assertEquals(200, $actual->getStatusCode());
+        $this->assertInstanceOf(JsonResponse::class, $actual);
+    }
+
+    public function testModifyCommentActionError()
+    {
+        $mockFormErrorIterator = $this->createMock(FormErrorIterator::class);
+
+        $this->mockFormFactoryInterface
+            ->expects($this->once())
+            ->method('create')
+            ->willReturn($this->mockFormInterface);
+
+        $this->mockFormInterface
+            ->expects($this->once())
+            ->method('submit')
+            ->willReturnSelf();
+
+        $this->mockRequest
+            ->expects($this->once())
+            ->method('getContent')
+            ->willReturn('{}');
+
+        $this->mockFormInterface
+            ->expects($this->once())
+            ->method('getData')
+            ->willReturn([]);
+
+        $this->mockFormInterface
+            ->expects($this->once())
+            ->method('isValid')
+            ->willReturn(false);
+
+        $this->mockFormInterface
+            ->expects($this->once())
+            ->method('getErrors')
+            ->willReturn($mockFormErrorIterator);
+
+        $actual = $this->commentController->modifyCommentAction($this->mockRequest, '');
+
+        $this->assertInstanceOf(JsonResponse::class, $actual);
+        $this->assertEquals(400, $actual->getStatusCode());
     }
 
     public function testDeleteCommentAction()
     {
-        $mockCommentManager = $this->createMock(CommentManager::class);
-        $mockFormFactoryInterface = $this->createMock(FormFactoryInterface::class);
-
-        $mockCommentManager
+        $this->mockCommentManager
             ->expects($this->once())
             ->method('deleteComment');
 
-        $comment = new CommentController($mockCommentManager, $mockFormFactoryInterface);
-
-        $actual = $comment->deleteCommentAction('5bd07aed1357d');
+        $actual = $this->commentController->deleteCommentAction('c6d90297-d196-4d31-ab93');
 
         $this->assertEquals(200, $actual->getStatusCode());
         $this->assertInstanceOf(JsonResponse::class, $actual);
+    }
+
+    public function testDeleteCommentActionError()
+    {
+        $mockNotFoundException = $this->createMock(NotFoundHttpException::class);
+
+        $this->mockCommentManager
+            ->expects($this->once())
+            ->method('deleteComment')
+            ->willThrowException($mockNotFoundException);
+
+        $mockNotFoundException
+            ->expects($this->once())
+            ->method('getStatusCode')
+            ->willReturn(400);
+
+        $actual = $this->commentController->deleteCommentAction('');
+
+        $this->assertInstanceOf(JsonResponse::class, $actual);
+        $this->assertEquals(400, $actual->getStatusCode());
+
+
+
 
 
     }
-
 }
