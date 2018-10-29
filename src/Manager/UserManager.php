@@ -4,8 +4,6 @@ namespace App\Manager;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Http\Discovery\Exception\NotFoundException;
-use Nelmio\Alice\Throwable\Exception\Generator\Context\CachedValueNotFound;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -28,9 +26,9 @@ class UserManager
     }
 
     /**
-     * @param string $id
-     * @param string $firstName
-     * @param string $lastName
+     * @param string             $id
+     * @param string             $firstName
+     * @param string             $lastName
      * @param \DateTimeInterface $birthDay
      */
     public function createUser(string $id, string $firstName, string $lastName, \DateTimeInterface $birthDay)
@@ -43,15 +41,17 @@ class UserManager
     }
 
     /**entityManager
-     * @param string $id
-     * @param string $firstName
-     * @param string $lastName
+     * @param string             $id
+     * @param string             $firstName
+     * @param string             $lastName
      * @param \DateTimeInterface $birthDay
      */
     public function modifyUser(string $id, string $firstName, string $lastName, \DateTimeInterface $birthDay)
     {
         /** @var User $user */
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['id' => $id]);
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['id' => $id]);
 
         $user->update($firstName, $lastName, $birthDay);
 
@@ -67,13 +67,14 @@ class UserManager
     {
         /**@var User $user */
 
-        $user = $this->entityManager->getRepository(User::class)->find($id);
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->find($id);
 
         if (empty($user)) {
             throw new NotFoundHttpException("error while deleting the user, the user is empty ");
         }
         $this->entityManager->remove($user);
-
         $this->entityManager->flush();
     }
 
@@ -84,7 +85,9 @@ class UserManager
     public function loadUser(string $id)
     {
         /**@var User $user */
-        $user = $this->entityManager->getRepository(User::class)->find($id);
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->find($id);
 
         if (empty($user)) {
             throw new NotFoundHttpException('User not found');
@@ -96,7 +99,7 @@ class UserManager
 
         $tabComments = [];
         foreach ($user->getComments() as $comment) {
-            $tabComments[] = [
+            $tabComments = [
                 "title" => $comment->getTitle(),
                 "description" => $comment->getDescription()
             ];
@@ -108,14 +111,14 @@ class UserManager
 
     public function loadAllUser()
     {
-        /** @var User[] $users*/
-        $users = $this->entityManager->getRepository(User::class)->findAll();
+        /** @var User[] $users */
+        $users = $this->entityManager
+            ->getRepository(User::class)
+            ->findAll();
 
         if (empty($users)) {
             throw new NotFoundHttpException('Users not found');
         }
-
-        $tabUser = [];
 
         foreach ($users as $key => $user) {
 
@@ -133,6 +136,7 @@ class UserManager
                 ];
             }
         }
+
         return $tabUser;
     }
 
