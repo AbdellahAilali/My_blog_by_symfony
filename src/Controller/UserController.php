@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controller;
 /*header('Access-Control-Allow-Origin: *');*/
 
@@ -43,6 +44,10 @@ class UserController
         try {
             $tabUser = $this->userManager->loadAllUser();
         } catch (NotFoundHttpException $exception) {
+
+            return new JsonResponse(['error_message' =>
+                $exception->getMessage()],
+                $exception->getStatusCode());
         }
 
         return new JsonResponse($tabUser);
@@ -58,7 +63,6 @@ class UserController
 
     public function loadUserAction($id)
     {
-
         try {
             $result = $this->userManager->loadUser($id);
 
@@ -67,7 +71,6 @@ class UserController
             return new JsonResponse(['error_message' =>
                 $exception->getMessage()],
                 $exception->getStatusCode());
-
         }
 
         return new JsonResponse($result);
@@ -79,13 +82,13 @@ class UserController
      * @param $id
      * @return JsonResponse
      */
-    /**@todo changer le return de la fonction* */
     public function deleteUserAction($id)
     {
         /** @var User $user */
         try {
             $this->userManager->deleteUser($id);
         } catch (NotFoundHttpException $exception) {
+
             return new JsonResponse(['error_message' =>
                 $exception->getMessage()],
                 $exception->getStatusCode());
@@ -153,7 +156,6 @@ class UserController
 
         return new JsonResponse(array_merge(['id' => $id], $data));
     }
-
 
 
 }
