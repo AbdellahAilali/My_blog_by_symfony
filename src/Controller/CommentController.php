@@ -14,7 +14,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CommentController
 {
-
     /**
      * @var FormFactoryInterface
      */
@@ -22,19 +21,21 @@ class CommentController
     /**
      * @var CommentManager
      */
-    private $commmentManager;
+    private $commentManager;
 
     /**
-     * @param EntityManagerInterface $entityManager
+     * @param CommentManager         $commentManager
+     * @param FormFactoryInterface   $formFactory
      */
-    public function __construct(CommentManager $commmentManager, FormFactoryInterface $formFactory)
+    public function __construct(CommentManager $commentManager, FormFactoryInterface $formFactory)
     {
-        $this->commmentManager = $commmentManager;
+        $this->commentManager = $commentManager;
         $this->formFactory = $formFactory;
     }
 
     /**
      * @Route("/comment", name="add_comment", methods={"POST"})
+     *
      * @param Request $request
      * @return JsonResponse
      */
@@ -49,7 +50,7 @@ class CommentController
         }
 
         $id = uniqid();
-        $this->commmentManager->createComment($id, $data['title'], $data['description'], $data['user']) ;
+        $this->commentManager->createComment($id, $data['title'], $data['description'], $data['user']) ;
 
         return new JsonResponse(['id' => $id, 'title' => $data['title'], 'description' => $data['description'], 'user' => $data['user']->getId()]);
     }
@@ -74,7 +75,7 @@ class CommentController
             $form->getErrors(true)], 400);
         }
 
-        $this->commmentManager->modifyComment(
+        $this->commentManager->modifyComment(
             $id,
             $data['title'],
             $data['description']
@@ -86,6 +87,7 @@ class CommentController
 
     /**
      * @route("/delete_comment/{id}", name="delete_comment", methods={"DELETE"})
+     *
      * @return JsonResponse
      * @param $id
      */
@@ -93,13 +95,12 @@ class CommentController
     public function deleteCommentAction($id)
     {
         try {
-            $this->commmentManager->deleteComment($id);
+            $this->commentManager->deleteComment($id);
         } catch (NotFoundHttpException $exception) {
 
             return new JsonResponse($exception->getMessage(),
                 $exception->getStatusCode());
         }
-
 
         return new JsonResponse();
 

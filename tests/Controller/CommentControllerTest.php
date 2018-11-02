@@ -21,9 +21,9 @@ class CommentControllerTest extends TestCase
     private $mockCommentManager;
     private $commentController;
 
-    public function __construct(?string $name = null, array $data = [], string $dataName = '')
+
+    public function setUp()
     {
-        parent::__construct($name, $data, $dataName);
         $this->mockRequest = $this->createMock(Request::class);
         $this->mockFormFactoryInterface = $this->createMock(FormFactoryInterface::class);
         $this->mockFormInterface = $this->createMock(FormInterface::class);
@@ -78,7 +78,7 @@ class CommentControllerTest extends TestCase
 
     public function testCreateCommentActionError()
     {
-        $mockFormErrorIteratoe = $this->createMock(FormErrorIterator::class);
+        $mockFormErrorIterator = $this->createMock(FormErrorIterator::class);
 
         $this->mockFormFactoryInterface
             ->expects($this->once())
@@ -108,7 +108,7 @@ class CommentControllerTest extends TestCase
         $this->mockFormInterface
             ->expects($this->once())
             ->method('getErrors')
-            ->willReturn($mockFormErrorIteratoe);
+            ->willReturn($mockFormErrorIterator);
 
         $actual = $this->commentController->createCommentAction($this->mockRequest);
 
@@ -223,9 +223,6 @@ class CommentControllerTest extends TestCase
 
         $this->assertInstanceOf(JsonResponse::class, $actual);
         $this->assertEquals(400, $actual->getStatusCode());
-
-
-
 
 
     }

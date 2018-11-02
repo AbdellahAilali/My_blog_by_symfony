@@ -24,14 +24,10 @@ class CommentFormType extends AbstractType
     {
         $builder
             ->add('title', TextType::class, [
-                'constraints' => [
-                    new NotBlank(['message' => 'The field "title" should be not blank.'])
-                ]
+
             ])
             ->add("description", TextType::class, [
-                'constraints' => [
-                    new NotBlank(['message' => 'The field "description" should be not blank.'])
-                ]
+
             ]);
     }
 
