@@ -38,7 +38,6 @@ class UserController
      */
     public function loadAllUserAction()
     {
-        $tabUser = [];
         try {
             $tabUser = $this->userManager->loadAllUser();
         } catch (NotFoundHttpException $exception) {
@@ -76,7 +75,7 @@ class UserController
 
 
     /**
-     * @Route ("/user_delete/{id}", name="user_delete", methods={"DELETE"})
+     * @Route ("/{id}", name="user_delete", methods={"DELETE"})
      * @param $id
      * @return JsonResponse
      */
@@ -130,7 +129,7 @@ class UserController
     }
 
     /**
-     * @Route("/user/modify/{id}", name="modify_user",methods={"PUT"})
+     * @Route("/{id}", name="modify_user",methods={"PUT"})
      * @param Request $request
      * @param $id
      * @return JsonResponse
@@ -155,5 +154,25 @@ class UserController
         return new JsonResponse(array_merge(['id' => $id], $data));
     }
 
+    /**
+     * @Route ("/download", name="download_file", methods={"GET"})
+     */
+    public function downloadAction()
+    {
+        $UserFields = $this->entityManager->getRepository(User::class)->findAll();
+
+        $delimiter = ';';
+        $file_csv = fopen('listUser.csv', 'w+');
+
+        foreach ($UserFields as $field) {
+            if( is_object($field) )
+                $field = (array) $field;
+            fputcsv($file_csv, $field, $delimiter);
+        }
+
+        fclose($file_csv);
+
+        return $this->file('listUser.csv');
+    }
 
 }
