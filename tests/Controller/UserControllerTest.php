@@ -4,14 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Comment;
 use App\Entity\User;
+use App\Form\UserFormType;
 use App\Manager\UserManager;
-use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Repository\RepositoryFactory;
-use PHPUnit\Framework\MockObject\Matcher\AnyInvokedCount;
+use phpDocumentor\Reflection\Types\This;
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Util\Json;
 use Symfony\Component\Form\FormErrorIterator;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\Test\FormInterface;
@@ -21,98 +19,125 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UserControllerTest extends TestCase
 {
-    public function testLoadUserAction()
+    private $mockUserManager;
+    private $mockFormFactoryInterface;
+    private $mockFormInterface;
+    private $mockNotFoundException;
+    private $userController;
+    private $mockRequest;
+
+    /**
+     * UserControllerTest constructor.
+     * @param null|string $name
+     * @param array       $data
+     * @param string      $dataName
+     */
+    public function __construct(?string $name = null, array $data = [], string $dataName = '')
     {
-        $mockFormFactoryInterface = $this->createMock(FormFactoryInterface::class);
+        parent::__construct($name, $data, $dataName);
 
-        $mockUserManager = $this->createMock(UserManager::class);
+        $this->mockUserManager = $this->createMock(UserManager::class);
+        $this->mockFormFactoryInterface = $this->createMock(FormFactoryInterface::class);
+        $this->mockFormInterface = $this->createMock(FormInterface::class);
+        $this->mockNotFoundException = $this->createMock(NotFoundHttpException::class);
+        $this->userController = new UserController($this->mockUserManager, $this->mockFormFactoryInterface);
+        $this->mockRequest = $this->createMock(Request::class);
+    }
 
-        $mockUser = $this->createMock(User::class);
-
-        $mockComment = $this->createMock(Comment::class);
-
-        $mockUserManager
+    public function testLoadAllUserAction()
+    {
+        $this->mockUserManager
             ->expects($this->once())
-            ->method('loadUser')
-            ->willReturn($mockUser, $mockComment);
+            ->method('loadAllUser');
 
-        $obj = new UserController($mockUserManager, $mockFormFactoryInterface);
-
-        $actual = $obj->loadUserAction("025caf9e-e6e6-4aac-a45b");
+        $actual = $this->userController->loadAllUserAction();
 
         $this->assertInstanceOf(JsonResponse::class, $actual);
+        $this->assertEquals(200, $actual->getStatusCode());
 
+    }
+
+    public function testLoadAllUserActionError()
+    {
+        $this->mockUserManager
+            ->expects($this->once())
+            ->method('loadAllUser')
+            ->willThrowException($this->mockNotFoundException);
+
+        $this->mockNotFoundException
+            ->expects($this->once())
+            ->method('getStatusCode')
+            ->willReturn(404);
+
+        $actual = $this->userController->loadAllUserAction();
+
+        $this->assertInstanceOf(JsonResponse::class, $actual);
+        $this->assertEquals(404, $actual->getStatusCode());
+        $this->assertEquals('{"error_message":""}', $actual->getContent());
+    }
+
+    public function testLoadUserAction()
+    {
+        $mockUser = $this->createMock(User::class);
+        $mockComment = $this->createMock(Comment::class);
+
+        $this->mockUserManager
+            ->expects($this->once())
+            ->method('loadUser')
+            ->with('025caf9e-e6e6-4aac-a45b')
+            ->willReturn($mockUser, $mockComment);
+
+        $actual = $this->userController->loadUserAction("025caf9e-e6e6-4aac-a45b");
+
+        $this->assertInstanceOf(JsonResponse::class, $actual);
         $this->assertEquals(200, $actual->getStatusCode());
 
     }
 
     public function testLoadUserErrorAction()
     {
-        $mockFormFactoryInterface = $this->createMock(FormFactoryInterface::class);
-
-        $mockUserManager = $this->createMock(UserManager::class);
-
-        $mockNotFoundException = $this->createMock(NotFoundHttpException::class);
-
-        $mockUserManager
+        $this->mockUserManager
             ->expects($this->once())
             ->method('loadUser')
-            ->willThrowException($mockNotFoundException);
+            ->willThrowException($this->mockNotFoundException);
 
-        /* $mockNotFoundException
-             ->expects($this->once())
-             ->method('getMessage')
-             ->willReturn(['error_message'=>'']);*/
-
-        $mockNotFoundException
+        $this->mockNotFoundException
             ->expects($this->once())
             ->method('getStatusCode')
             ->willReturn(404);
 
-        $objUserController = new UserController($mockUserManager, $mockFormFactoryInterface);
-
-        $expected = $objUserController->loadUserAction('');
+        $expected = $this->userController->loadUserAction('');
 
         $this->assertInstanceOf(JsonResponse::class, $expected);
-        //$this->assertEquals(["error_message"=>""], $expected->getContent());
         $this->assertEquals(404, $expected->getStatusCode());
     }
 
     public function testDeleteUserAction()
     {
-        $mockUserManager = $this->createMock(UserManager::class);
+        $this->mockUserManager
+            ->expects($this->once())
+            ->method('deleteUser')
+            ->with('025caf9e-e6e6-4aac-a45b');
 
-        $mockFormFactoryInterface = $this->createMock(FormFactoryInterface::class);
-
-        $objUserController = new UserController($mockUserManager, $mockFormFactoryInterface);
-
-        $actual = $objUserController->deleteUserAction("5b683d97a6f2f");
+        $actual = $this->userController->deleteUserAction("025caf9e-e6e6-4aac-a45b");
 
         $this->assertEquals(new JsonResponse(), $actual);
+        $this->assertEquals(200, $actual->getStatusCode());
     }
 
     public function testDeleteUserOnErrorWhenUserDoesNotExist()
     {
-        $mockUserManager = $this->createMock(UserManager::class);
-
-        $mockFormFactoryInterface = $this->createMock(FormFactoryInterface::class);
-
-        $mockNotFoundException = $this->createMock(NotFoundHttpException::class);
-
-        $mockNotFoundException
+        $this->mockNotFoundException
             ->expects($this->once())
             ->method('getStatusCode')
             ->willReturn(404);
 
-        $mockUserManager
+        $this->mockUserManager
             ->expects($this->once())
             ->method('deleteUser')
-            ->willThrowException($mockNotFoundException);
+            ->willThrowException($this->mockNotFoundException);
 
-
-        $objUserController = new UserController($mockUserManager, $mockFormFactoryInterface);
-
-        $actual = $objUserController->deleteUserAction("");
+        $actual = $this->userController->deleteUserAction("");
 
         $this->assertInstanceOf(JsonResponse::class, $actual);
         $this->assertEquals(404, $actual->getStatusCode());
@@ -121,166 +146,165 @@ class UserControllerTest extends TestCase
 
     public function testCreateUserAction()
     {
-        $mockFormFactoryInterface = $this->createMock(FormFactoryInterface::class);
-
-        $mockUserManager = $this->createMock(UserManager::class);
-
-        $mockFormInterface = $this->createMock(FormInterface::class);
-
-        $mockRequest = $this->createMock(Request::class);
-
-        $mockFormFactoryInterface
+        $this->mockFormFactoryInterface
             ->expects($this->once())
             ->method('create')
-            ->willReturn($mockFormInterface);
+            ->willReturn($this->mockFormInterface);
 
-        $mockFormInterface
+        $this->mockFormInterface
             ->expects($this->once())
             ->method('submit')
-            ->willReturn($mockRequest);
+            ->willReturn($this->mockRequest);
 
-        $mockRequest
+        $this->mockRequest
             ->expects($this->once())
             ->method('getContent')
-            ->willReturn('{"lastname":"Ailali","firstname":"Abdellah","birthday":"2018-07-26"}');
+            ->willReturn('{"lastname":"Doe","firstname":"Jonas","birthday":"2018-07-26"}');
 
-        $mockFormInterface
+        $this->mockFormInterface
             ->expects($this->once())
             ->method('getData')
-            ->willReturn(['lastname' => 'Ailali', 'firstname' => 'Abdellah', 'birthday' => '2018-07-26']);
+            ->willReturn(['lastname' => 'Doe', 'firstname' => 'Jonas', 'birthday' => '2018-07-26']);
 
-        $mockFormInterface
+        $this->mockFormInterface
             ->expects($this->once())
             ->method('isValid')
             ->willReturn(true);
 
-        $mockUserManager
+        $this->mockUserManager
             ->expects($this->once())
             ->method('createUser');
 
-        $objUser = new UserController($mockUserManager, $mockFormFactoryInterface);
+        $actual = $this->userController->createUserAction($this->mockRequest);
 
-        $expected = $objUser->createUserAction($mockRequest);
-
-        $content = json_decode($expected->getContent(), true);
+        $content = json_decode($actual->getContent(), true);
 
         $this->assertArrayHasKey('id', $content);
+        $this->assertEquals('Doe', $content['lastname']);
+        $this->assertEquals('Jonas', $content['firstname']);
+        $this->assertEquals('2018-07-26', $content['birthday']);
 
-        $this->assertEquals('Ailali', $content['lastname']);
     }
 
+    public function testCreateUserActionError()
+    {
+        $mockFormErrorIterator = $this->createMock(FormErrorIterator::class);
+
+        $this->mockFormFactoryInterface
+            ->expects($this->once())
+            ->method('create')
+            ->willReturn($this->mockFormInterface);
+
+        $this->mockFormInterface
+            ->expects($this->once())
+            ->method('submit')
+            ->with(["id" => "", "lastname" => "", "firstname" => "", "birthday" => ""])
+            ->willReturnSelf();
+
+        $this->mockRequest
+            ->expects($this->once())
+            ->method('getContent')
+            ->willReturn('{"id":"","lastname":"","firstname":"","birthday":""}');
+
+        $this->mockFormInterface
+            ->expects($this->once())
+            ->method('getData');
+
+        $this->mockFormInterface
+            ->expects($this->once())
+            ->method('isValid')
+            ->willReturn(false);
+
+        $this->mockFormInterface
+            ->expects($this->once())
+            ->method('getErrors')
+            ->willReturn($mockFormErrorIterator);
+
+        $actual = $this->userController->createUserAction($this->mockRequest);
+
+        $this->assertEquals(400, $actual->getStatusCode());
+        $this->assertInstanceOf(JsonResponse::class, $actual);
+    }
 
     public function testModifyUserAction()
     {
-        $mockFormFactoryInterface = $this->createMock(FormFactoryInterface::class);
-        $mockFormInterface = $this->createMock(FormInterface::class);
-        $mockUserManager = $this->createMock(UserManager::class);
-        $mockRequest = $this->createMock(Request::class);
+        $expected = '{"id":"4eb298dd-5cd7-4d10-9b9q","lastname":"tony","firstname":"montana","birthday":"1994-08-15"}';
 
-        $mockFormFactoryInterface
+        $this->mockFormFactoryInterface
             ->expects($this->once())
             ->method('create')
-            ->willReturn($mockFormInterface);
+            ->willReturn($this->mockFormInterface);
 
-        $mockFormInterface
+        $this->mockFormInterface
             ->expects($this->once())
             ->method('submit')
-            ->willReturn($mockRequest);
+            ->willReturn($this->mockRequest);
 
-        $mockRequest
+        $this->mockRequest
             ->expects($this->once())
             ->method("getContent")
             ->willReturn('{"id":"4eb298dd-5cd7-4d10-9b9q","lastname":"tony","firstname":"montana","birthday":"1994-08-15"}');
 
-        $mockFormInterface
+        $this->mockFormInterface
             ->expects($this->once())
             ->method('getData')
-            ->willReturn(["lastname" => "tony", "firstname" => "montana", "birthday" => "1994-08-15"]);
+            ->willReturn(["id" => "4eb298dd-5cd7-4d10-9b9q", "lastname" => "tony", "firstname" => "montana", "birthday" => "1994-08-15"]);
 
-        $mockFormInterface
+        $this->mockFormInterface
             ->expects($this->once())
             ->method('isValid')
             ->willReturn(true);
 
-        $mockUserManager
+        $this->mockUserManager
             ->expects($this->once())
             ->method('modifyUser');
 
-        $user = new UserController($mockUserManager, $mockFormFactoryInterface);
-
-        $actual = $user->modifyUserAction($mockRequest, '4eb298dd-5cd7-4d10-9b9q');
+        $actual = $this->userController->modifyUserAction($this->mockRequest, '4eb298dd-5cd7-4d10-9b9q');
 
         $this->assertInstanceOf(JsonResponse::class, $actual);
-        $this->assertEquals('{"id":"4eb298dd-5cd7-4d10-9b9q","lastname":"tony","firstname":"montana","birthday":"1994-08-15"}', $actual->getContent());
+        $this->assertEquals($expected, $actual->getContent());
         $this->assertEquals(200, $actual->getStatusCode());
     }
 
     public function testModifyUserActionError()
     {
-        $mockFormFactoryInterface = $this->createMock(FormFactoryInterface::class);
-        $mockFormInterface = $this->createMock(FormInterface::class);
-        $mockUserManager = $this->createMock(UserManager::class);
-        $mockRequest = $this->createMock(Request::class);
         $mockFormErrorIterator = $this->createMock(FormErrorIterator::class);
 
-
-        $mockFormFactoryInterface
+        $this->mockFormFactoryInterface
             ->expects($this->once())
             ->method('create')
-            ->willReturn($mockFormInterface);
+            ->willReturn($this->mockFormInterface);
 
-        $mockFormInterface
+        $this->mockFormInterface
             ->expects($this->once())
             ->method('submit')
-            ->willReturn($mockRequest);
+            ->willReturn($this->mockRequest);
 
-        $mockRequest
+        $this->mockRequest
             ->expects($this->once())
             ->method("getContent")
             ->willReturn('{"id":"","lastname":"","firstname":"","birthday":""}');
 
-        $mockFormInterface
+        $this->mockFormInterface
             ->expects($this->once())
             ->method('getData')
             ->willReturn(["lastname" => "", "firstname" => "", "birthday" => ""]);
 
-        $mockFormInterface
+        $this->mockFormInterface
             ->expects($this->once())
             ->method('isValid')
             ->willReturn(false);
 
-        $mockFormInterface
+        $this->mockFormInterface
             ->expects($this->once())
             ->method('getErrors')
             ->willReturn($mockFormErrorIterator);
 
-        $objUser = new UserController($mockUserManager, $mockFormFactoryInterface);
-
-        $actual = $objUser->modifyUserAction($mockRequest, "");
+        $actual = $this->userController->modifyUserAction($this->mockRequest, "");
 
         $this->assertInstanceOf(JsonResponse::class, $actual);
         $this->assertEquals(400, $actual->getStatusCode());
     }
-
-    public function testLoadAllUserAction()
-    {
-        $mockFormFactoryInterface = $this->createMock(FormFactoryInterface::class);
-
-        $mockUserManager = $this->createMock(UserManager::class);
-
-        $mockUserManager
-            ->expects($this->once())
-            ->method('loadAllUser');
-
-        $user = new UserController($mockUserManager, $mockFormFactoryInterface);
-
-        $actual = $user->loadAllUserAction();
-
-        $this->assertInstanceOf(JsonResponse::class, $actual);
-        $this->assertEquals(200, $actual->getStatusCode());
-
-    }
-
 }
 
 

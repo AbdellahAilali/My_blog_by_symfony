@@ -1,29 +1,22 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: abdellah
- * Date: 19/07/18
- * Time: 16:59
- */
 
 namespace App\Controller;
 
-use App\Entity\Comment;
 use App\Form\CommentCreateFormType;
+use App\Form\CommentFormType;
 use App\Manager\CommentManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Form\FormFactoryInterface;
-use App\Form\CommentFormType;
 
 class CommentController
 {
 
     /**
-     * @var FormFactoryInterfacex
+     * @var FormFactoryInterface
      */
     private $formFactory;
     /**
@@ -62,15 +55,13 @@ class CommentController
     }
 
     /**
-     * @todo  modifier nom des routes, rajouter une sortie erreur
-     */
-    /**
      * @route("/modify_comment/{id}", name="modify_comment", methods={"PUT"})
-     * @param $id
+     *
      * @param Request $request
+     * @param         $id
+     *
      * @return JsonResponse
      */
-
     public function modifyCommentAction(Request $request, $id)
     {
         $form = $this->formFactory->create(CommentFormType::class);

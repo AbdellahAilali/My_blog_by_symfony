@@ -4,8 +4,6 @@ namespace App\Manager;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Http\Discovery\Exception\NotFoundException;
-use Nelmio\Alice\Throwable\Exception\Generator\Context\CachedValueNotFound;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -28,9 +26,9 @@ class UserManager
     }
 
     /**
-     * @param string $id
-     * @param string $firstName
-     * @param string $lastName
+     * @param string             $id
+     * @param string             $firstName
+     * @param string             $lastName
      * @param \DateTimeInterface $birthDay
      */
     public function createUser(string $id, string $firstName, string $lastName, \DateTimeInterface $birthDay)
@@ -42,22 +40,19 @@ class UserManager
         $this->entityManager->flush();
     }
 
-    /**
-     * @param string $id
-     * @param string $firstName
-     * @param string $lastName
+    /**entityManager
+     * @param string             $id
+     * @param string             $firstName
+     * @param string             $lastName
      * @param \DateTimeInterface $birthDay
      */
     public function modifyUser(string $id, string $firstName, string $lastName, \DateTimeInterface $birthDay)
     {
         /** @var User $user */
-        //je vais chercher mon objet user par l'id
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['id' => $id]);
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['id' => $id]);
 
-        /**
-         * j'utilise ma fonction upadte qui se trouve dans ma class User
-         *je lui donne des parammétre pour leurs affécter de nouvelles valeurs
-         **/
         $user->update($firstName, $lastName, $birthDay);
 
         $this->entityManager->persist($user);
@@ -72,13 +67,14 @@ class UserManager
     {
         /**@var User $user */
 
-        $user = $this->entityManager->getRepository(User::class)->find($id);
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->find($id);
 
         if (empty($user)) {
             throw new NotFoundHttpException("error while deleting the user, the user is empty ");
         }
         $this->entityManager->remove($user);
-
         $this->entityManager->flush();
     }
 
@@ -89,7 +85,9 @@ class UserManager
     public function loadUser(string $id)
     {
         /**@var User $user */
-        $user = $this->entityManager->getRepository(User::class)->find($id);
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->find($id);
 
         if (empty($user)) {
             throw new NotFoundHttpException('User not found');
@@ -101,9 +99,9 @@ class UserManager
 
         $tabComments = [];
         foreach ($user->getComments() as $comment) {
-            $tabComments[] = [
+            $tabComments = [
                 "title" => $comment->getTitle(),
-                "comment" => $comment->getDescription()
+                "description" => $comment->getDescription()
             ];
         }
         $result["comments"] = $tabComments;
@@ -113,14 +111,14 @@ class UserManager
 
     public function loadAllUser()
     {
-        /** @var User[] $users*/
-        $users = $this->entityManager->getRepository(User::class)->findAll();
+        /** @var User[] $users */
+        $users = $this->entityManager
+            ->getRepository(User::class)
+            ->findAll();
 
         if (empty($users)) {
             throw new NotFoundHttpException('Users not found');
         }
-
-        $tabUser = [];
 
         foreach ($users as $key => $user) {
 
@@ -131,16 +129,17 @@ class UserManager
                 "birthday" => $user->getBirthday()->format('Y-m-d'),
             ];
 
-            /*foreach ($user->getComments() as $comment) {
+            foreach ($user->getComments() as $comment) {
                 $tabUser[$key]['comments'][] = [
                     "title" => $comment->getTitle(),
                     "comment" => $comment->getDescription()
                 ];
-            }*/
+            }
         }
 
         return $tabUser;
     }
+
 
 }
 

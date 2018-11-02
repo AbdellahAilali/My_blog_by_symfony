@@ -36,7 +36,7 @@ class User
     private $birthday;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="user", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="user", orphanRemoval=true,  cascade={"persist"})
      */
     private $comments;
 
