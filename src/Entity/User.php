@@ -40,19 +40,26 @@ class User
     private $comments;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $photo;
+
+
+    /**
      * @param string             $id
      * @param string             $firstName
      * @param string             $lastName
      * @param \DateTimeInterface $birthDay
+     * @param string             $photo
      */
-    public function __construct(string $id, string $firstName, string $lastName, \DateTimeInterface $birthDay)
+    public function __construct(string $id, string $firstName, string $lastName, \DateTimeInterface $birthDay, string $photo)
     {
         $this->id = $id;
         $this->firstname = $firstName;
         $this->lastname = $lastName;
         $this->birthday = $birthDay;
-
         $this->comments = new ArrayCollection();
+        $this->photo = $photo;
     }
 
     /**
@@ -146,6 +153,20 @@ class User
 
         return $this;
     }
+
+    public function getPhoto(): ?string
+    {
+        return $this->photo;
+    }
+
+    public function setPhoto(?string $photo): self
+    {
+        $this->photo = $photo;
+
+        return $this;
+    }
+
+  
 
 
 
