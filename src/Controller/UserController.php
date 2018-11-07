@@ -3,15 +3,20 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\FileFormType;
 use App\Form\UserFormType;
+use App\Manager\UserFileManager;
 use App\Manager\UserManager;
+use Doctrine\ORM\EntityManagerInterface;
+use phpDocumentor\Reflection\Types\This;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-class UserController
+class UserController extends AbstractController
 {
     /**
      * @var UserManager
@@ -23,13 +28,29 @@ class UserController
     private $formFactory;
 
     /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @var UserFileManager
+     */
+    private $userFileManager;
+
+    /**
      * @param FormFactoryInterface $formFactory
      * @param UserManager $userManager
      */
-    public function __construct(UserManager $userManager, FormFactoryInterface $formFactory)
-    {
+    public function __construct(
+        UserManager $userManager,
+        FormFactoryInterface $formFactory,
+        EntityManagerInterface $entityManager,
+        UserFileManager $userFileManager
+    ) {
         $this->userManager = $userManager;
         $this->formFactory = $formFactory;
+        $this->entityManager = $entityManager;
+        $this->userFileManager = $userFileManager;
     }
 
     /**
@@ -117,13 +138,17 @@ class UserController
             return new JsonResponse([(string)
             $form->getErrors(true)], 400);
         }
-
+        $file =$this->
+        var_dump($data);
         $id = uniqid();
         $this->userManager->createUser(
             $id,
             $data['firstname'],
             $data['lastname'],
-            new \DateTime($data['birthday']));
+            new \DateTime($data['birthday']),
+            $data['photo']
+        );
+
 
         return new JsonResponse(array_merge(['id' => $id], $data));
     }
@@ -159,20 +184,29 @@ class UserController
      */
     public function downloadAction()
     {
-        $UserFields = $this->entityManager->getRepository(User::class)->findAll();
+        $path = __DIR__.'/../../var/cache/userCSV.csv';
 
-        $delimiter = ';';
-        $file_csv = fopen('listUser.csv', 'w+');
+        $this->userFileManager->create($path);
 
-        foreach ($UserFields as $field) {
-            if( is_object($field) )
-                $field = (array) $field;
-            fputcsv($file_csv, $field, $delimiter);
-        }
-
-        fclose($file_csv);
-
-        return $this->file('listUser.csv');
+        return $this->file($path);
     }
 
+
+    /**
+     * @Route ("/file", name="download_file", methods={"GET"})
+     */
+    public function uploadFile(Request $request)
+    {
+        $form = $this->formFactory->create(FileFormType::class);
+        $form->submit(json_decode($request->getContent(), true));
+
+        $data = $form->getData();
+
+        if (!$form->isValid()) {
+            return new JsonResponse([(string)$form->getErrors(true)], 400);
+        }
+
+        return new JsonResponse();
+
+    }
 }

@@ -4,11 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Comment;
 use App\Entity\User;
-use App\Form\UserFormType;
+use App\Manager\UserFileManager;
 use App\Manager\UserManager;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use phpDocumentor\Reflection\Types\This;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormErrorIterator;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -20,27 +18,24 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class UserControllerTest extends TestCase
 {
     private $mockUserManager;
+    private $mockUserFileManager;
     private $mockFormFactoryInterface;
     private $mockFormInterface;
     private $mockNotFoundException;
     private $userController;
     private $mockRequest;
+    private $mockEntityManager;
 
-    /**
-     * UserControllerTest constructor.
-     * @param null|string $name
-     * @param array       $data
-     * @param string      $dataName
-     */
     public function __construct(?string $name = null, array $data = [], string $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
-
+        $this->mockEntityManager = $this->createMock(EntityManagerInterface::class);
         $this->mockUserManager = $this->createMock(UserManager::class);
+        $this->mockUserFileManager = $this->createMock(UserFileManager::class);
         $this->mockFormFactoryInterface = $this->createMock(FormFactoryInterface::class);
         $this->mockFormInterface = $this->createMock(FormInterface::class);
         $this->mockNotFoundException = $this->createMock(NotFoundHttpException::class);
-        $this->userController = new UserController($this->mockUserManager, $this->mockFormFactoryInterface);
+        $this->userController = new UserController($this->mockUserManager, $this->mockFormFactoryInterface, $this->mockEntityManager, $this->mockUserFileManager);
         $this->mockRequest = $this->createMock(Request::class);
     }
 
@@ -305,29 +300,20 @@ class UserControllerTest extends TestCase
         $this->assertInstanceOf(JsonResponse::class, $actual);
         $this->assertEquals(400, $actual->getStatusCode());
     }
+
+    public function testDownloadAction()
+    {
+        //$mockUserFileManager = $this->createMock(UserFileManager::class);
+        //$mockAbstractController = $this->createMock(AbstractController::class);
+
+        $this->mockUserFileManager
+            ->expects($this->once())
+            ->method('create')
+            ->willReturn(true);
+
+        $this->userController->downloadAction();
+
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

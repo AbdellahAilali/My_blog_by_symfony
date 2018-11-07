@@ -39,6 +39,7 @@ class User
      */
     private $comments;
 
+
     /**
      * @param string             $id
      * @param string             $firstName
@@ -51,7 +52,6 @@ class User
         $this->firstname = $firstName;
         $this->lastname = $lastName;
         $this->birthday = $birthDay;
-
         $this->comments = new ArrayCollection();
     }
 
@@ -146,8 +146,4 @@ class User
 
         return $this;
     }
-
-
-
-
 }
