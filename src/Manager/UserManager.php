@@ -30,11 +30,10 @@ class UserManager
      * @param string             $firstName
      * @param string             $lastName
      * @param \DateTimeInterface $birthDay
-     * @param string             $photo
      */
-    public function createUser(string $id, string $firstName, string $lastName, \DateTimeInterface $birthDay, string $photo)
+    public function createUser(string $id, string $firstName, string $lastName, \DateTimeInterface $birthDay)
     {
-        $user = new User($id, $firstName, $lastName, $birthDay, $photo);
+        $user = new User($id, $firstName, $lastName, $birthDay);
 
         $this->entityManager->persist($user);
 

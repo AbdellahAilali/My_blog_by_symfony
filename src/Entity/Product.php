@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
@@ -24,17 +25,18 @@ class Product
      */
     private $brochure;
 
+
     public function getId()
     {
         return $this->id;
     }
 
-    public function getBrochure(): ?string
+    public function getBrochure()
     {
         return $this->brochure;
     }
 
-    public function setBrochure(string $brochure): self
+    public function setBrochure($brochure): self
     {
         $this->brochure = $brochure;
 

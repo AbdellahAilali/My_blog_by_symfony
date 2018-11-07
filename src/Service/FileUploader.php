@@ -22,15 +22,18 @@ class FileUploader
      * @param UploadedFile $file
      * @return string|JsonResponse
      */
+
     public function upload(UploadedFile $file)
     {
         $fileName = md5(uniqid()) . '.' . $file->guessExtension();
 
         try {
             $file->move($this->getTargetDirectory(), $fileName);
+
         } catch (FileException $e) {
-            return new JsonResponse(['error_message' =>
-                $e->getMessage()]);
+
+            return new JsonResponse(
+                ['error_message' => $e->getMessage()]);
         }
 
         return $fileName;
