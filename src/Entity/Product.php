@@ -20,8 +20,8 @@ class Product
     private $id;
 
     /**
+     * @Assert\File
      * @ORM\Column(type="string", length=255)
-     *
      */
     private $brochure;
 

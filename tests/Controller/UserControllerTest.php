@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Comment;
 use App\Entity\User;
+use App\Form\BrochureType;
+use App\Manager\ProductManager;
 use App\Manager\UserFileManager;
 use App\Manager\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,6 +17,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+
 class UserControllerTest extends TestCase
 {
     private $mockUserManager;
@@ -25,6 +28,8 @@ class UserControllerTest extends TestCase
     private $userController;
     private $mockRequest;
     private $mockEntityManager;
+    private $mockProductType;
+    private $mockProductManager;
 
     public function __construct(?string $name = null, array $data = [], string $dataName = '')
     {
@@ -35,7 +40,9 @@ class UserControllerTest extends TestCase
         $this->mockFormFactoryInterface = $this->createMock(FormFactoryInterface::class);
         $this->mockFormInterface = $this->createMock(FormInterface::class);
         $this->mockNotFoundException = $this->createMock(NotFoundHttpException::class);
-        $this->userController = new UserController($this->mockUserManager, $this->mockFormFactoryInterface, $this->mockEntityManager, $this->mockUserFileManager);
+        $this->mockProductManager = $this->createMock(ProductManager::class);
+        $this->mockProductType= $this->createMock(BrochureType::class);
+        $this->userController = new UserController($this->mockUserManager, $this->mockFormFactoryInterface, $this->mockProductType, $this->mockProductManager, $this->mockUserFileManager);
         $this->mockRequest = $this->createMock(Request::class);
     }
 

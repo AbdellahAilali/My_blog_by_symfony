@@ -5,7 +5,6 @@ default:
             bootstrap: features/bootstrap/bootstrap.php
             class: App\Kernel
 
-
         Ubirak\RestApiBehatExtension\Extension:
             rest:
                 base_url: http://localhost:8000

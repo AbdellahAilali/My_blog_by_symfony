@@ -46,7 +46,11 @@ class User
      * @param string             $lastName
      * @param \DateTimeInterface $birthDay
      */
-    public function __construct(string $id, string $firstName, string $lastName, \DateTimeInterface $birthDay)
+    public function __construct(
+        string $id,
+        string $firstName,
+        string $lastName,
+        \DateTimeInterface $birthDay)
     {
         $this->id = $id;
         $this->firstname = $firstName;

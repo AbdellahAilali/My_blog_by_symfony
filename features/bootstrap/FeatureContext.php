@@ -7,7 +7,6 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use \Behat\Symfony2Extension\Context\KernelDictionary;
 
 
-
 /**
  * Defines application features from the specific context.
  */
@@ -40,6 +39,9 @@ class FeatureContext implements Context, KernelAwareContext
 
     /**
      * @AfterScenario
+     *
+     * @param EntityManager $em
+     * @throws \Doctrine\ORM\Tools\ToolsException
      */
     private function createDb(EntityManager $em)
     {
@@ -55,6 +57,7 @@ class FeatureContext implements Context, KernelAwareContext
         $tool->createSchema($classes);
         $tool->updateSchema($classes);
     }
+
 
 }
 
