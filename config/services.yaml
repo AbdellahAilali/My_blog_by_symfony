@@ -28,11 +28,6 @@ services:
         resource: '../src/*'
         exclude: '../src/{Entity,Migrations,Tests,Kernel.php}'
 
-    app.dire_salam:
-        class: App\Salam\DireSalam
-        propertie:
-            hello: '@app.hello'
-        public: true
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class

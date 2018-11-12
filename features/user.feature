@@ -1,6 +1,6 @@
 
 Feature: User
-  Permet de vérifier que la class UserController fonctionne
+  Permet de vérifier que la class UserController
 
 
   Scenario: load the user by id

@@ -4,7 +4,8 @@ namespace Test\Controller;
 
 use App\Controller\ProductController;
 use App\Entity\Product;
-use App\Form\ProductType;
+use App\Form\BrochureType;
+use App\Manager\ProductManager;
 use App\Service\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
@@ -16,19 +17,18 @@ class ProductControllerTest extends TestCase
 {
     public function testUploadFileAction()
     {
-        $mockProductType = $this->createMock(ProductType::class);
         $mockRequest = $this->createMock(Request::class);
         $mockFileUploader = $this->createMock(FileUploader::class);
         $mockEntityManager = $this->createMock(EntityManagerInterface::class);
         $mockFormInterface = $this->createMock(FormInterface::class);
-
-        $product = new Product();
-        $file = $product->setBrochure('image.png');
+        $mockProsuctManager = $this->createMock(ProductManager::class);
+        $mockProductManager = $this->createMock(ProductManager::class);
+        $mockProduct = $this->createMock(Product::class);
 
         $mockFormInterface
             ->expects($this->once())
             ->method('handleRequest')
-            ->willReturn($file);
+            ->willReturn($mockProduct);
 
         $mockFormInterface
             ->expects($this->once())
@@ -40,7 +40,7 @@ class ProductControllerTest extends TestCase
             ->method('isValid')
             ->willReturn(true);
 
-        $fileProduct = new ProductController($mockEntityManager);
+        $fileProduct = new ProductController($mockEntityManager, $mockProductManager );
 
         $fileProduct->uploadFileAction($mockRequest, $mockFileUploader);
     }

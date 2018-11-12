@@ -1,24 +1,26 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: abdellah
- * Date: 06/11/18
- * Time: 18:09
- */
 
 namespace App\Controller;
 
-use App\Salam\Hello;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Cache\Simple\FilesystemCache;
 use Symfony\Component\Routing\Annotation\Route;
 
-class HelloController
+class HelloController extends AbstractController
 {
     /**
      * @Route("/hello", name="hello")
      */
-    public function helloIndex(Hello $hello)
+    public function helloIndex()
     {
-        return new Response($hello->berbere());
+        $cache = new FilesystemCache();
+
+        $cache->set('stats.products_cont', 4711);
+
+        if ($cache->has('stats.products_cont')) {
+            return $cache;
+        }
+        var_dump($cache);
+        return $this->render('base.html.twig');
     }
 }

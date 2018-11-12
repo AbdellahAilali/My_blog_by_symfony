@@ -4,11 +4,12 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\FileFormType;
+use App\Form\BrochureType;
 use App\Form\UserFormType;
+use App\Manager\ProductManager;
 use App\Manager\UserFileManager;
 use App\Manager\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
-use phpDocumentor\Reflection\Types\This;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -22,34 +23,44 @@ class UserController extends AbstractController
      * @var UserManager
      */
     private $userManager;
+
     /**
      * @var FormFactoryInterface
      */
     private $formFactory;
 
     /**
-     * @var EntityManagerInterface
+     * @var BrochureType
      */
-    private $entityManager;
+    private $productType;
 
+    /**
+     * @var ProductManager
+     */
+    private $productManager;
     /**
      * @var UserFileManager
      */
     private $userFileManager;
 
     /**
+     * @param UserManager          $userManager
      * @param FormFactoryInterface $formFactory
-     * @param UserManager $userManager
+     * @param BrochureType          $productType
+     * @param ProductManager       $productManager
+     * @param UserFileManager      $userFileManager
      */
     public function __construct(
         UserManager $userManager,
         FormFactoryInterface $formFactory,
-        EntityManagerInterface $entityManager,
-        UserFileManager $userFileManager
-    ) {
+        BrochureType $productType,
+        ProductManager $productManager,
+        UserFileManager $userFileManager )
+    {
         $this->userManager = $userManager;
         $this->formFactory = $formFactory;
-        $this->entityManager = $entityManager;
+        $this->productType = $productType;
+        $this->productManager = $productManager;
         $this->userFileManager = $userFileManager;
     }
 
@@ -138,8 +149,7 @@ class UserController extends AbstractController
             return new JsonResponse([(string)
             $form->getErrors(true)], 400);
         }
-        $file =$this->
-        var_dump($data);
+
         $id = uniqid();
         $this->userManager->createUser(
             $id,
@@ -184,7 +194,7 @@ class UserController extends AbstractController
      */
     public function downloadAction()
     {
-        $path = __DIR__.'/../../var/cache/userCSV.csv';
+        $path = __DIR__ . '/../../var/cache/userCSV.csv';
 
         $this->userFileManager->create($path);
 
@@ -194,13 +204,14 @@ class UserController extends AbstractController
 
     /**
      * @Route ("/file", name="download_file", methods={"GET"})
+     *
+     * @param Request $request
+     * @return JsonResponse
      */
     public function uploadFile(Request $request)
     {
-        $form = $this->formFactory->create(FileFormType::class);
+        $form = $this->formFactory->create(BrochureType::class);
         $form->submit(json_decode($request->getContent(), true));
-
-        $data = $form->getData();
 
         if (!$form->isValid()) {
             return new JsonResponse([(string)$form->getErrors(true)], 400);

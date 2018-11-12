@@ -31,7 +31,7 @@ class FileUploaderTest extends TestCase
     public function testUploadError()
     {
         $mockUploadedFile = $this->createMock(UploadedFile::class);
-        $mockFileException = $this->createMock(Exception::class);
+        $mockFileException = $this->createMock(FileException::class);
 
         $mockUploadedFile
             ->expects($this->once())
@@ -50,7 +50,7 @@ class FileUploaderTest extends TestCase
 
         $fileUploader = new FileUploader('image');
 
-        $actual = $fileUploader->upload($mockUploadedFile);
+        $fileUploader->upload($mockUploadedFile);
 
     }
 }
