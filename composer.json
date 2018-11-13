@@ -9,6 +9,7 @@
         "doctrine/collections": "^1.5",
         "nelmio/cors-bundle": "^1.5",
         "phpunit/phpunit": "^7.2",
+        "predis/predis": "^1.1",
         "sensio/framework-extra-bundle": "^5.2",
         "symfony/asset": "^4.1",
         "symfony/cache": "^4.1",
