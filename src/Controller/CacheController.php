@@ -3,70 +3,43 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Cache\Adapter\RedisAdapter;
-use Symfony\Component\Cache\Simple\FilesystemCache;
 use Symfony\Component\Routing\Annotation\Route;
+use Twig\Template;
 
 class CacheController extends AbstractController
 {
     /**
-     * @Route("/hello", name="hello")
+     * @var EntityManagerInterface
      */
-    public function CacheAction()
+    private $entityManager;
+    /**
+     * @var Template
+     */
+    private $template;
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param Template               $template
+     */
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        Template $template
+    )
     {
-        /*
-         * PSR 16
+        $this->entityManager = $entityManager;
+        $this->template = $template;
+    }
 
-         $cache = new FilesystemCache();
 
-         $cache->set('lastName', "Abdellah");
-
-         if (!$cache->has('lastNam')) {
-
-             echo "non";
-         }
-
-        //$user = $cache->get('lastName');
-
-        $cache->setMultiple([HelloController
-            "lastName" => "Doe",
-            "firstName" => "John",
-        ]);
-
-        $users = $cache->getMultiple(["lastName", "firstName"]);
-
-        foreach ($users as $user) {
-
-            var_dump($user  ) ;
-        }
-
-        ////PSR 6     ITEM POOL ADAPTER
-
-        $cache->deleteMultiple(["lastName", "firstName"]);
-
-        $cache = new Filesystem();
-
-        $user = $cache->getItem("lastName");
-
-        $user->set("Daryle");
-
-        $cache->save($user);
-
-        //$user = $cache->getItem("lastName");
-
-        if (!$user->isHit()) {
-
-            echo "n'existe pas dans le cache";
-        }
-
-        $total =  $user->get();
-        $cache->deleteItem("lastName");
-
-        var_dump($total);*/
-
+    /**
+     * @Route("/cached", name="cached")
+     */
+    public function cachedData()
+    {
         $client = RedisAdapter::createConnection(
             'redis://localhost'
         );
@@ -82,10 +55,10 @@ class CacheController extends AbstractController
 
         if (!$userItem->isHit()) {
 
-            echo 'Je ne suis pas en cache';
+            echo 'user n\'est pas cache';
 
             /** @var EntityRepository $repo */
-            $repo = $this->getDoctrine()
+            $repo = $this->entityManager
                 ->getRepository(User::class);
 
             $users = $repo
@@ -97,12 +70,9 @@ class CacheController extends AbstractController
             $cache->save($userItem);
 
         } else {
-
-            echo 'Je suis en cache';
+            echo 'user est en cache';
         }
 
-        //var_dump($userItem->get());
-
-        return $this->render('base.html.twig');
+        return $this->template->render(['base.html.twig']);
     }
 }
