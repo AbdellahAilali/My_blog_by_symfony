@@ -6,9 +6,12 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Cache\Adapter\RedisAdapter;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Twig\Template;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Twig\Environment;
 
 class CacheController extends AbstractController
 {
@@ -20,42 +23,35 @@ class CacheController extends AbstractController
      * @var Template
      */
     private $template;
+    /**
+     * @var AdapterInterface
+     */
+    private $adapter;
 
     /**
      * @param EntityManagerInterface $entityManager
-     * @param Template               $template
+     * @param Environment $template
+     * @param AdapterInterface $adapter
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        Template $template
+        Environment $template,
+        AdapterInterface $adapter
     )
     {
         $this->entityManager = $entityManager;
         $this->template = $template;
+        $this->adapter = $adapter;
     }
-
 
     /**
      * @Route("/cached", name="cached")
      */
     public function cachedData()
     {
-        $client = RedisAdapter::createConnection(
-            'redis://localhost'
-        );
-
-        /** @var RedisAdapter $cache */
-        $cache = new RedisAdapter(
-            $client,
-            $namespace = '',
-            $defaultLifetime = 10
-        );
-
-        $userItem = $cache->getItem('users');
+        $userItem = $this->adapter->getItem('users');
 
         if (!$userItem->isHit()) {
-
-            echo 'user n\'est pas cache';
 
             /** @var EntityRepository $repo */
             $repo = $this->entityManager
@@ -67,12 +63,9 @@ class CacheController extends AbstractController
                 ->getScalarResult();
 
             $userItem->set(json_encode($users));
-            $cache->save($userItem);
-
-        } else {
-            echo 'user est en cache';
+            $this->adapter->save($userItem);
         }
 
-        return $this->template->render(['base.html.twig']);
+        return new Response($this->template->render('base.html.twig'));
     }
 }
