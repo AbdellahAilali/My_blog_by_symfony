@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: abdellah
- * Date: 06/11/18
- * Time: 18:06
- */
 
 namespace App\Salam;
 

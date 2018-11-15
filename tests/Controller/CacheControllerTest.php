@@ -3,46 +3,45 @@
 namespace Test\Controller;
 
 use App\Controller\CacheController;
-use App\Entity\User;
-use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use PHPUnit\Framework\TestCase;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Cache\Adapter\AbstractAdapter;
-use Symfony\Component\Cache\Adapter\RedisAdapter;
+use Psr\Cache\CacheItemInterface;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Cache\CacheItem;
+use Symfony\Component\HttpFoundation\Response;
+use Twig\Environment;
+use Twig\Template;
 
 class CacheControllerTest extends TestCase
 {
-    public function testCacheAction()
+    public function testCachedDataIsNot()
     {
-        $mockRedisAdapter = $this->createMock(RedisAdapter::class);
-       // $mockObjectCacheItem = $this->createMock(CacheItem::class);
-        $mockManagerRegistry = $this->createMock(ManagerRegistry::class);
-        $mockRepository = $this->createMock(ObjectRepository::class);
-        $mockAbstractController = $this->createMock(AbstractController::class);
-        $mockEntityRepository = $this->createMock(EntityRepository::class);
-        $mockQueryBuilder = $this->createMock(QueryBuilder::class);
-        $mockAbstractQuery = $this->createMock(AbstractQuery::class);
+        $mockEntityRepository   = $this->createMock(EntityRepository::class);
+        $mockEntityManager      = $this->createMock(EntityManagerInterface::class);
+        $mockAbstractQuery      = $this->createMock(AbstractQuery::class);
+        $mockQueryBuilder       = $this->createMock(QueryBuilder::class);
+        $mockResponse           = $this->createMock(Response::class);
+        $mockAdapterInterface   = $this->createMock(AdapterInterface::class);
+        $mockCacheItemInterface = $this->createMock(CacheItemInterface::class);
 
-        $user = new User('0a2b3c4d-5e6f7g8h', 'Doe', 'John', new \DateTime('01/01/1999'));
-
-        $mockRedisAdapter
+        $mockAdapterInterface
             ->expects($this->once())
-            ->method('getItem');
+            ->method('getItem')
+            ->with('users')
+            ->willReturn($mockCacheItemInterface );
 
-        /*$mockObjectCacheItem
+        $mockCacheItemInterface
             ->expects($this->once())
             ->method('isHit')
-            ->willReturn(true);*/
+            ->willReturn(false);
 
-        $mockAbstractController
+        $mockEntityManager
             ->expects($this->once())
-            ->method('getDoctrine');
-           // ->willReturn($mockManagerRegistry);
+            ->method('getRepository')
+            ->willReturn($mockEntityRepository);
 
         $mockEntityRepository
             ->expects($this->once())
@@ -52,21 +51,71 @@ class CacheControllerTest extends TestCase
         $mockQueryBuilder
             ->expects($this->once())
             ->method('getQuery')
-            ->willReturn($mockQueryBuilder);
+            ->willReturn($mockAbstractQuery);
 
         $mockAbstractQuery
             ->expects($this->once())
             ->method('getScalarResult')
             ->willReturn(array());
 
-     /*   $mockObjectCacheItem
+        $mockCacheItemInterface
             ->expects($this->once())
-            ->method('set')*/
+            ->method('set')
+            ->willReturn([]);
 
-        $cacheController = new CacheController();
+        $mockAdapterInterface
+            ->expects($this->once())
+            ->method('save')
+            ->willReturn(true);
 
-        $cacheController->CacheAction();
+        $mockTwigTemplate = $this->createMock(Environment::class);
+        $mockTwigTemplate
+            ->expects($this->once())
+            ->method('render')
+            ->with('base.html.twig')
+            ->willReturn($mockResponse);
 
+        $cacheController = new CacheController($mockEntityManager, $mockTwigTemplate, $mockAdapterInterface);
 
+        $actual = $cacheController->cachedData();
+
+        $this->assertSame(200, $actual->getStatusCode());
+        $this->assertInstanceOf( Response::class, $actual);
     }
+
+    public function testCachedData()
+    {
+        $mockEntityManager      = $this->createMock(EntityManagerInterface::class);
+        $mockTwigTemplate       = $this->createMock(Environment::class);
+        $mockResponse           = $this->createMock(Response::class);
+        $mockCacheItemInterface = $this->createMock(CacheItemInterface::class);
+        $mockAdapterInterface   = $this->createMock(AdapterInterface::class);
+
+        $mockAdapterInterface
+            ->expects($this->once())
+            ->method('getItem')
+            ->with('users')
+            ->willReturn($mockCacheItemInterface);
+
+        $mockCacheItemInterface
+            ->expects($this->once())
+            ->method('isHit')
+            ->willReturn(true);
+
+        $mockTwigTemplate
+            ->expects($this->once())
+            ->method('render')
+            ->willReturn($mockResponse);
+
+        $cacheController = new CacheController(
+            $mockEntityManager,
+            $mockTwigTemplate,
+            $mockAdapterInterface);
+
+        $actual = $cacheController->cachedData();
+
+        $this->assertSame(200, $actual->getStatusCode());
+        $this->assertInstanceOf( Response::class, $actual);
+    }
+
 }

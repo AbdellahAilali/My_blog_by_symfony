@@ -125,6 +125,9 @@
     "guzzlehttp/psr7": {
         "version": "1.4.2"
     },
+    "hamcrest/hamcrest-php": {
+        "version": "v2.0.0"
+    },
     "instaclick/php-webdriver": {
         "version": "1.4.5"
     },
@@ -133,6 +136,9 @@
     },
     "justinrainbow/json-schema": {
         "version": "5.2.7"
+    },
+    "mockery/mockery": {
+        "version": "1.2.0"
     },
     "monolog/monolog": {
         "version": "1.23.0"
