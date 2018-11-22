@@ -54,13 +54,11 @@ class CacheController extends AbstractController
      */
     public function cachedData()
     {
+        echo 'abdellah';
+
         $userItem = $this
             ->adapter
             ->getItem('users');
-
-            $user =  'abdellah';
-
-            phpinfo();
 
         if (!$userItem->isHit()) {
 
