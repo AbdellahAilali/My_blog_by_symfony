@@ -14,4 +14,4 @@ default:
             contexts:
                 - Ubirak\RestApiBehatExtension\RestApiContext
                 - Ubirak\RestApiBehatExtension\Json\JsonContext
-                - FeatureContext
+                - FeatureContext: ['@app.cache.countries']

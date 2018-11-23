@@ -5,12 +5,14 @@ namespace App\Controller;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Psr\Cache\InvalidArgumentException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use spec\Tolerance\Metrics\Collector\RabbitMq\RabbitMqCollectorSpec;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
-use Symfony\Component\Cache\Adapter\RedisAdapter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Tolerance\Metrics\Collector\RabbitMq\RabbitMqHttpClient;
 use Twig\Environment;
 
 class CacheController extends AbstractController
@@ -46,13 +48,24 @@ class CacheController extends AbstractController
 
     /**
      * @Route("/cached", name="cached")
+     * @return Response
+     * @throws InvalidArgumentException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
     public function cachedData()
     {
-        $userItem = $this->adapter->getItem('users');
+        var_dump(RabbitMqCollectorSpec::class);
+        
+        echo 'abdellah';
+        echo 'ailali';
+        $userItem = $this
+            ->adapter
+            ->getItem('users');
 
         if (!$userItem->isHit()) {
-
+                echo "mark1";
             /** @var EntityRepository $repo */
             $repo = $this->entityManager
                 ->getRepository(User::class);
@@ -66,6 +79,8 @@ class CacheController extends AbstractController
             $this->adapter->save($userItem);
         }
 
-        return new Response($this->template->render('base.html.twig'));
+        return new Response($this
+            ->template
+            ->render('base.html.twig',["users"=>$userItem]));
     }
 }
