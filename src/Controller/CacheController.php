@@ -55,13 +55,13 @@ class CacheController extends AbstractController
     public function cachedData()
     {
         echo 'abdellah';
-
+        echo 'ailali';
         $userItem = $this
             ->adapter
             ->getItem('users');
 
         if (!$userItem->isHit()) {
-
+                echo "mark1";
             /** @var EntityRepository $repo */
             $repo = $this->entityManager
                 ->getRepository(User::class);
