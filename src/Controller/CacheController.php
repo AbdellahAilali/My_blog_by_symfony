@@ -56,10 +56,9 @@ class CacheController extends AbstractController
      */
     public function cachedData()
     {
-        var_dump(RabbitMqCollectorSpec::class);
-        
         echo 'abdellah';
         echo 'ailali';
+
         $userItem = $this
             ->adapter
             ->getItem('users');
@@ -73,7 +72,7 @@ class CacheController extends AbstractController
             $users = $repo
                 ->createQueryBuilder('u')
                 ->getQuery()
-                ->getScalarResult();
+               ->getScalarResult();
 
             $userItem->set(json_encode($users));
             $this->adapter->save($userItem);
