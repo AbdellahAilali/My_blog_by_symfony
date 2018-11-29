@@ -28,7 +28,6 @@ services:
         resource: '../src/*'
         exclude: '../src/{Entity,Migrations,Tests,Kernel.php}'
 
-
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
     App\Controller\:
@@ -43,6 +42,13 @@ services:
         arguments:
             $adapter: '@app.cache.countries'
         tags: ['controller.service_arguments']
+
+    PhpAmqpLib\Connection\AMQPStreamConnection:
+        arguments:
+            - '%env(RABBITMQ_HOST)%'
+            - '%env(RABBITMQ_PORT)%'
+            - '%env(RABBITMQ_USER)%'
+            - '%env(RABBITMQ_PASS)%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

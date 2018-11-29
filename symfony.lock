@@ -2,6 +2,9 @@
     "atoum/atoum": {
         "version": "3.3.0"
     },
+    "beberlei/assert": {
+        "version": "v2.9.6"
+    },
     "behat/behat": {
         "version": "v3.4.3"
     },
@@ -30,6 +33,15 @@
         }
     },
     "behat/transliterator": {
+        "version": "v1.2.0"
+    },
+    "bernard/amqp-driver": {
+        "version": "0.1-dev"
+    },
+    "bernard/bernard": {
+        "version": "v0.12.4"
+    },
+    "bernard/normalt": {
         "version": "v1.2.0"
     },
     "clue/stream-filter": {
