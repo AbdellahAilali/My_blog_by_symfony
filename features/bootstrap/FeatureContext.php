@@ -127,7 +127,6 @@ class FeatureContext implements Context, KernelAwareContext
 
         $client->request("GET", "/cached");
 
-       var_dump($client->getRequest()->);
     }
 
 }

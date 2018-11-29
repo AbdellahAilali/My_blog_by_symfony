@@ -131,6 +131,7 @@ class UserController extends AbstractController
      * @Route ("/user", name="create_user", methods={"POST"})
      * @param Request $request
      * @return JsonResponse
+     * @throws \Exception
      */
     public function createUserAction(Request $request)
     {

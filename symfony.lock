@@ -2,6 +2,9 @@
     "atoum/atoum": {
         "version": "3.3.0"
     },
+    "beberlei/assert": {
+        "version": "v2.9.6"
+    },
     "behat/behat": {
         "version": "v3.4.3"
     },
@@ -30,6 +33,15 @@
         }
     },
     "behat/transliterator": {
+        "version": "v1.2.0"
+    },
+    "bernard/amqp-driver": {
+        "version": "0.1-dev"
+    },
+    "bernard/bernard": {
+        "version": "v0.12.4"
+    },
+    "bernard/normalt": {
         "version": "v1.2.0"
     },
     "clue/stream-filter": {
@@ -115,6 +127,9 @@
     },
     "egulias/email-validator": {
         "version": "2.1.4"
+    },
+    "facebook/webdriver": {
+        "version": "1.6.0"
     },
     "fig/link-util": {
         "version": "1.0.0"
@@ -430,6 +445,9 @@
     },
     "symfony/orm-pack": {
         "version": "v1.0.5"
+    },
+    "symfony/panther": {
+        "version": "v0.2.0"
     },
     "symfony/phpunit-bridge": {
         "version": "4.1",

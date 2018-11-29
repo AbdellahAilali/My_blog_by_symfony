@@ -7,12 +7,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Psr\Cache\InvalidArgumentException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use spec\Tolerance\Metrics\Collector\RabbitMq\RabbitMqCollectorSpec;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Tolerance\Metrics\Collector\RabbitMq\RabbitMqHttpClient;
 use Twig\Environment;
 
 class CacheController extends AbstractController
@@ -56,10 +54,9 @@ class CacheController extends AbstractController
      */
     public function cachedData()
     {
-        var_dump(RabbitMqCollectorSpec::class);
-        
         echo 'abdellah';
         echo 'ailali';
+
         $userItem = $this
             ->adapter
             ->getItem('users');
@@ -73,7 +70,7 @@ class CacheController extends AbstractController
             $users = $repo
                 ->createQueryBuilder('u')
                 ->getQuery()
-                ->getScalarResult();
+               ->getScalarResult();
 
             $userItem->set(json_encode($users));
             $this->adapter->save($userItem);
