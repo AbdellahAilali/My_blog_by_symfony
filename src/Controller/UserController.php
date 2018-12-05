@@ -3,17 +3,19 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Form\FileFormType;
+use App\Event\SendMailEvent;
+use App\EventListener\SendMailListener;
 use App\Form\BrochureType;
 use App\Form\UserFormType;
 use App\Manager\ProductManager;
 use App\Manager\UserFileManager;
 use App\Manager\UserManager;
-use Doctrine\ORM\EntityManagerInterface;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -38,30 +40,40 @@ class UserController extends AbstractController
      * @var ProductManager
      */
     private $productManager;
+
     /**
      * @var UserFileManager
      */
     private $userFileManager;
 
     /**
-     * @param UserManager          $userManager
+     * @var SendMailListener
+     */
+    private $listener;
+
+    /**
+     * @param UserManager $userManager
      * @param FormFactoryInterface $formFactory
-     * @param BrochureType          $productType
-     * @param ProductManager       $productManager
-     * @param UserFileManager      $userFileManager
+     * @param BrochureType $productType
+     * @param ProductManager $productManager
+     * @param UserFileManager $userFileManager
+     * @param SendMailListener $listener
      */
     public function __construct(
         UserManager $userManager,
         FormFactoryInterface $formFactory,
         BrochureType $productType,
         ProductManager $productManager,
-        UserFileManager $userFileManager )
+        UserFileManager $userFileManager,
+        SendMailListener $listener)
+
     {
         $this->userManager = $userManager;
         $this->formFactory = $formFactory;
         $this->productType = $productType;
         $this->productManager = $productManager;
         $this->userFileManager = $userFileManager;
+        $this->listener = $listener;
     }
 
     /**
@@ -128,40 +140,26 @@ class UserController extends AbstractController
 
 
     /**
-     * @Route ("/user", name="create_user", methods={"POST"})
+     * @Route ("/user", name="create_user", methods={"GET"})
      * @param Request $request
-     * @return JsonResponse
+     * @return Response
      * @throws \Exception
      */
     public function createUserAction(Request $request)
     {
-        /**je crée mon formlaire a partir de ma class UserFormType
-         * Je le soumette et lui envoye ma request
-         * true comme 2param pour qu'il me renvoie un tab associatif*/
+        $user = new User("007","Pablo","Escobar",new DateTime("01-01-1993"));
 
-        $form = $this
-            ->formFactory->create(UserFormType::class);
+        $event = new SendMailEvent($user);
 
-        $form
-            ->submit(json_decode($request->getContent(), true));
+        $listener = new SendMailListener();
 
-        $data = $form->getData();
-        if (!$form->isValid()) {
-            return new JsonResponse([(string)
-            $form->getErrors(true)], 400);
-        }
+        $dispatcher = $this->get('event_dispatcher');
 
-        $id = uniqid();
-        $this->userManager->createUser(
-            $id,
-            $data['firstname'],
-            $data['lastname'],
-            new \DateTime($data['birthday']),
-            $data['photo']
-        );
+        $dispatcher->addListener('send.mail', [$listener, 'sendMailAction']);
 
+        $dispatcher->dispatch('send.mail', $event );
 
-        return new JsonResponse(array_merge(['id' => $id], $data));
+        return new Response("");
     }
 
     /**
@@ -169,11 +167,13 @@ class UserController extends AbstractController
      * @param Request $request
      * @param $id
      * @return JsonResponse
+     * @throws \Exception
      */
 
     public function modifyUserAction(Request $request, $id)
     {
         $form = $this->formFactory->create(UserFormType::class);
+
         $form->submit(json_decode($request->getContent(), true));
 
         $data = $form->getData();
