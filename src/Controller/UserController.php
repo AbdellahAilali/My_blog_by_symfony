@@ -147,7 +147,7 @@ class UserController extends AbstractController
      */
     public function createUserAction(Request $request)
     {
-        $user = new User("007","Pablo","Escobar",new DateTime("01-01-1993"));
+        /*$user = new User("007","Pablo","Escobar",new DateTime("01-01-1993"));
 
         $event = new SendMailEvent($user);
 
@@ -157,7 +157,7 @@ class UserController extends AbstractController
 
         $dispatcher->addListener('send.mail', [$listener, 'sendMailAction']);
 
-        $dispatcher->dispatch('send.mail', $event );
+        $dispatcher->dispatch('send.mail', $event );*/
 
         return new Response("");
     }

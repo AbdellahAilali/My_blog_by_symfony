@@ -44,8 +44,8 @@ services:
     tags: ['controller.service_arguments']
 
   App\App\EventListener\SendMailListener:
-    tags:
-      - { name: kernel.event_listener, event: kernel.exception }
+   # tags:
+    #  - { name: kernel.event_listener, event: kernel.exception }
 
 
 
