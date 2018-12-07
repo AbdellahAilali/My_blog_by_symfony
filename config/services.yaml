@@ -43,11 +43,6 @@ services:
       $adapter: '@app.cache.countries'
     tags: ['controller.service_arguments']
 
-  App\App\EventListener\SendMailListener:
-   # tags:
-    #  - { name: kernel.event_listener, event: kernel.exception }
-
-
 
   PhpAmqpLib\Connection\AMQPStreamConnection:
     arguments:

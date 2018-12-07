@@ -3,14 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Event\SendMailEvent;
-use App\EventListener\SendMailListener;
 use App\Form\BrochureType;
 use App\Form\UserFormType;
 use App\Manager\ProductManager;
 use App\Manager\UserFileManager;
 use App\Manager\UserManager;
-use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -47,25 +44,19 @@ class UserController extends AbstractController
     private $userFileManager;
 
     /**
-     * @var SendMailListener
-     */
-    private $listener;
-
-    /**
      * @param UserManager $userManager
      * @param FormFactoryInterface $formFactory
      * @param BrochureType $productType
      * @param ProductManager $productManager
      * @param UserFileManager $userFileManager
-     * @param SendMailListener $listener
      */
     public function __construct(
         UserManager $userManager,
         FormFactoryInterface $formFactory,
         BrochureType $productType,
         ProductManager $productManager,
-        UserFileManager $userFileManager,
-        SendMailListener $listener)
+        UserFileManager $userFileManager
+    )
 
     {
         $this->userManager = $userManager;
@@ -73,7 +64,6 @@ class UserController extends AbstractController
         $this->productType = $productType;
         $this->productManager = $productManager;
         $this->userFileManager = $userFileManager;
-        $this->listener = $listener;
     }
 
     /**
@@ -113,7 +103,6 @@ class UserController extends AbstractController
                 $exception->getMessage()],
                 $exception->getStatusCode());
         }
-
         return new JsonResponse($result);
     }
 
@@ -145,20 +134,8 @@ class UserController extends AbstractController
      * @return Response
      * @throws \Exception
      */
-    public function createUserAction(Request $request)
+    public function createUserAction()
     {
-        /*$user = new User("007","Pablo","Escobar",new DateTime("01-01-1993"));
-
-        $event = new SendMailEvent($user);
-
-        $listener = new SendMailListener();
-
-        $dispatcher = $this->get('event_dispatcher');
-
-        $dispatcher->addListener('send.mail', [$listener, 'sendMailAction']);
-
-        $dispatcher->dispatch('send.mail', $event );*/
-
         return new Response("");
     }
 
