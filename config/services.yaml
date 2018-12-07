@@ -44,7 +44,6 @@ services:
     tags: ['controller.service_arguments']
 
 
-
   PhpAmqpLib\Connection\AMQPStreamConnection:
     arguments:
       - '%env(RABBITMQ_HOST)%'
