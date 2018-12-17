@@ -70,7 +70,7 @@ class UserController extends AbstractController
      * @return JsonResponse
      * @Route ("/", name="user_all", methods={"GET"})
      */
-    public function loadAllUserAction()
+    public function loadAllUserAction(Request $request)
     {
         try {
             $tabUser = $this->userManager->loadAllUser();
@@ -81,6 +81,7 @@ class UserController extends AbstractController
                 $exception->getStatusCode());
         }
 
+        var_dump($request = Request::createFromGlobals());
         return new JsonResponse($tabUser);
     }
 
