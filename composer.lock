@@ -8253,9 +8253,6 @@
             "replace": {
                 "mageekguy/atoum": "*"
             },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2"
-            },
             "suggest": {
                 "atoum/stubs": "Provides IDE support (like autocompletion) for atoum",
                 "ext-mbstring": "Provides support for UTF-8 strings",

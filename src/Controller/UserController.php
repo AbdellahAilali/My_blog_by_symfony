@@ -10,6 +10,7 @@ use App\Manager\UserFileManager;
 use App\Manager\UserManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -67,10 +68,10 @@ class UserController extends AbstractController
     }
 
     /**
-     * @return JsonResponse
-     * @Route ("/", name="user_all", methods={"GET"})
+     * @Route ("/", name="user", methods={"GET"})
+     * @return Response
      */
-    public function loadAllUserAction(Request $request)
+    public function loadAllUserAction()
     {
         try {
             $tabUser = $this->userManager->loadAllUser();
@@ -80,9 +81,7 @@ class UserController extends AbstractController
                 $exception->getMessage()],
                 $exception->getStatusCode());
         }
-
-        var_dump($request = Request::createFromGlobals());
-        return new JsonResponse($tabUser);
+        $this->render('base.html.twig', [$tabUser]);
     }
 
     /**
@@ -197,6 +196,6 @@ class UserController extends AbstractController
         }
 
         return new JsonResponse();
-
     }
+
 }
