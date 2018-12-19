@@ -129,14 +129,39 @@ class UserController extends AbstractController
 
 
     /**
-     * @Route ("/user", name="create_user", methods={"GET"})
+     * @Route ("/user", name="create_user", methods={"POST"})
      * @param Request $request
-     * @return Response
+     * @return JsonResponse
      * @throws \Exception
      */
-    public function createUserAction()
+    public function createUserAction(Request $request)
     {
-        return new Response("");
+        /**je crée mon formlaire a partir de ma class UserFormType
+         * Je le soumette et lui envoye ma request
+         * true comme 2param pour qu'il me renvoie un tab associatif*/
+
+        $form = $this
+            ->formFactory->create(UserFormType::class);
+
+        $form
+            ->submit(json_decode($request->getContent(), true));
+
+        $data = $form->getData();
+        if (!$form->isValid()) {
+            return new JsonResponse([(string)
+            $form->getErrors(true)], 400);
+        }
+
+        $id = uniqid();
+        $this->userManager->createUser(
+            $id,
+            $data['firstname'],
+            $data['lastname'],
+            new \DateTime($data['birthday'])
+        );
+
+
+        return new JsonResponse(array_merge(['id' => $id], $data));
     }
 
     /**
