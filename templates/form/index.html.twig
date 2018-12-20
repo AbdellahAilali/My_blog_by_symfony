@@ -2,12 +2,12 @@
 
 {% block body %}
     {{ form_start(form, {'methode': 'POST'}) }}
-        {{ form_errors(form) }}
+    {{ form_errors(form) }}
 
     {{ form_row(form.username) }}
     {{ form_row(form.pseudo) }}
 
-    <input type="submit" value="Envoyer">
+
     {{ form_end(form) }}
 
 {% endblock %}

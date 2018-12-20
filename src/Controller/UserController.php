@@ -148,8 +148,7 @@ class UserController extends AbstractController
 
         $data = $form->getData();
         if (!$form->isValid()) {
-            return new JsonResponse([(string)
-            $form->getErrors(true)], 400);
+            return new JsonResponse([(string)$form->getErrors(true)], 400);
         }
 
         $id = uniqid();

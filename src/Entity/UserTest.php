@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UsertestRepository")
  */
-class Usertest
+class UserTest
 {
     /**
      * @ORM\Id()
@@ -33,7 +33,7 @@ class Usertest
      * @param String $username
      * @param String $pseudo
      */
-    public function create(String $username, String $pseudo)
+    public function __construct(String $username, String $pseudo)
     {
         $this->username = $username;
         $this->pseudo = $pseudo;
