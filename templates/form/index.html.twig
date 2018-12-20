@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {{ form_start(form, {'methode': 'POST'}) }}
+    {{ form_errors(form) }}
+
+    {{ form_row(form.username) }}
+    {{ form_row(form.pseudo) }}
+
+
+    {{ form_end(form) }}
+
+{% endblock %}

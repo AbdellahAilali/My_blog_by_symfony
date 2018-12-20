@@ -19,8 +19,6 @@ class Comment
 
     /**
      * @ORM\Column(type="string", length=255)
-     *
-     *
      */
     private $title;
 
@@ -30,7 +28,7 @@ class Comment
     private $description;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="comments",  cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="comments", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $user;

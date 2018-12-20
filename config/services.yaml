@@ -43,14 +43,12 @@ services:
       $adapter: '@app.cache.countries'
     tags: ['controller.service_arguments']
 
-
   PhpAmqpLib\Connection\AMQPStreamConnection:
     arguments:
       - '%env(RABBITMQ_HOST)%'
       - '%env(RABBITMQ_PORT)%'
       - '%env(RABBITMQ_USER)%'
       - '%env(RABBITMQ_PASS)%'
-
 
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones
