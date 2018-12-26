@@ -14,4 +14,4 @@ default:
             contexts:
                 - Ubirak\RestApiBehatExtension\RestApiContext
                 - Ubirak\RestApiBehatExtension\Json\JsonContext
-                - FeatureContext: ['@app.cache.countries']
+                - FeatureContext: ['@app.cache.countries', '@doctrine.orm.entity_manager', '@App\Service\FixtureLoaderService']

@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserController extends AbstractController
 {
@@ -81,7 +82,9 @@ class UserController extends AbstractController
                 $exception->getMessage()],
                 $exception->getStatusCode());
         }
-        $this->render('base.html.twig', [$tabUser]);
+
+
+        return new JsonResponse($tabUser[0]['comments']);
     }
 
     /**
@@ -129,7 +132,7 @@ class UserController extends AbstractController
 
 
     /**
-     * @Route ("/user", name="create_user", methods={"POST"})
+     * @Route ("/user", name="create_user")
      * @param Request $request
      * @return JsonResponse
      * @throws \Exception
@@ -147,24 +150,25 @@ class UserController extends AbstractController
             ->submit(json_decode($request->getContent(), true));
 
         $data = $form->getData();
+
         if (!$form->isValid()) {
             return new JsonResponse([(string)$form->getErrors(true)], 400);
         }
-
+        dump($request->request);
         $id = uniqid();
         $this->userManager->createUser(
             $id,
-            $data['firstname'],
-            $data['lastname'],
+            $data['firstName'],
+            $data['lastName'],
             new \DateTime($data['birthday'])
         );
 
-
+        dump($data);
         return new JsonResponse(array_merge(['id' => $id], $data));
     }
 
     /**
-     * @Route("/{id}", name="modify_user",methods={"PUT"})
+     * @Route("/modify/{id}", name="modify_user")
      * @param Request $request
      * @param $id
      * @return JsonResponse
@@ -179,13 +183,16 @@ class UserController extends AbstractController
 
         $data = $form->getData();
 
-        if (!$form->isValid()) {
+        if (!$form->handleRequest($request)->isValid()) {
+
             return new JsonResponse([(string)
             $form->getErrors(true)], 400);
         }
+
+
         $this->userManager->modifyUser($id,
-            $data['firstname'],
-            $data['lastname'],
+            $data['firstName'],
+            $data['lastName'],
             new \DateTime($data['birthday']));
 
         return new JsonResponse(array_merge(['id' => $id], $data));
