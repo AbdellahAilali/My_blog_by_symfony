@@ -29,11 +29,11 @@ class UserManager
      * @param string             $id
      * @param string             $firstName
      * @param string             $lastName
-     * @param \DateTimeInterface $birthDay
+     * @param \DateTimeInterface $birthday
      */
-    public function createUser(string $id, string $firstName, string $lastName, \DateTimeInterface $birthDay)
+    public function createUser(string $id, string $firstName, string $lastName, \DateTimeInterface $birthday)
     {
-        $user = new User($id, $firstName, $lastName, $birthDay);
+        $user = new User($id, $firstName, $lastName, $birthday);
 
         $this->entityManager->persist($user);
 
@@ -119,13 +119,13 @@ class UserManager
         if (empty($users)) {
             throw new NotFoundHttpException('Users not found');
         }
-
+        $tabUser=[];
         foreach ($users as $key => $user) {
 
             $tabUser[$key] = [
                 "id" => $user->getId(),
-                "firstname" => $user->getFirstname(),
-                "lastname" => $user->getLastname(),
+                "firstName" => $user->getFirstname(),
+                "lastName" => $user->getLastname(),
                 "birthday" => $user->getBirthday()->format('Y-m-d'),
             ];
 

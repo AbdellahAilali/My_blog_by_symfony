@@ -1,5 +1,6 @@
 <?php
 
+use App\Service\FixtureLoaderService;
 use Behat\Behat\Context\Context;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
@@ -19,33 +20,38 @@ class FeatureContext implements Context, KernelAwareContext
     /**
      * @var AdapterInterface
      */
-    public $adapter;
+    private $adapter;
 
-    public function __construct(AdapterInterface $adapter)
+    /**
+     * @var FixtureLoaderService
+     */
+    private $fixtureLoaderService;
+
+    /**
+     * @var EntityManager
+     */
+    private $entityManager;
+
+
+    public function __construct(
+        AdapterInterface $adapter,
+        EntityManager $entityManager,
+        FixtureLoaderService $fixtureLoaderService)
     {
         $this->adapter = $adapter;
+        $this->fixtureLoaderService = $fixtureLoaderService;
+        $this->entityManager = $entityManager;
     }
 
     /**
      * @BeforeScenario
+     * @throws \Doctrine\ORM\Tools\ToolsException
      */
     public function setUp()
     {
-        $kernel = $this->getKernel();
-        $em = $kernel->getContainer()->get('doctrine.orm.entity_manager');
+        $this->createDb($this->entityManager);
 
-        $this->createDb($em);
-
-        //DIR specisie le fichier sur lequel je suis.
-        $loader = new \Nelmio\Alice\Loader\NativeLoader();
-        $objectSet = $loader->loadFile(__DIR__ . '/../../tests/Fixtures/fixtures.yml')->getObjects();
-
-        foreach ($objectSet as $object) {
-            $em->persist($object);
-        }
-
-        $em->flush();
-        $em->clear();
+        $this->fixtureLoaderService->load('/../../tests/Fixtures/fixtures.yml');
 
         $this->adapter->clear();
     }
@@ -71,10 +77,10 @@ class FeatureContext implements Context, KernelAwareContext
         $tool->updateSchema($classes);
     }
 
+
     /**
      * @Given users are not cached
      *
-     * @throws Exception
      * @throws InvalidArgumentException
      */
     public function ItemIsNotCached()
@@ -88,7 +94,6 @@ class FeatureContext implements Context, KernelAwareContext
     /**
      * @Then users are in cache
      *
-     * @throws Exception
      * @throws InvalidArgumentException
      */
     public function ItemIsCached()
@@ -103,7 +108,6 @@ class FeatureContext implements Context, KernelAwareContext
     /**
      * @Given  save users in cache
      *
-     * @throws Exception
      * @throws InvalidArgumentException
      */
     public function ItemIsAlreadyCached()
@@ -128,6 +132,4 @@ class FeatureContext implements Context, KernelAwareContext
         $client->request("GET", "/cached");
 
     }
-
 }
-

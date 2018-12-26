@@ -1,7 +1,7 @@
 App\Entity\User:
     user.1:
         __construct:
-          - "32132dsf132ds1f3ds21fsd"
+          - "32132-dsf13-2ds13-ds21d"
           - 'Abdellah'
           - 'Ailali'
           - '<date_create()>'

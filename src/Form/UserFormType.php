@@ -19,15 +19,8 @@ class UserFormType extends AbstractType
     {
         $builder
             ->add('lastName', TextType::class)
-            ->add("firstName", TextType::class);
-           /* ->add("birthday", TextType::class, [
-                'constraints' => [
-                    new NotBlank(['message' => 'The field "birthday" should be not blank.'])
-                ]
-            ])
-            ->add("photo", FileType::class, [
-                'label' => "file the photo"
-            ]);*/
+            ->add("firstName", TextType::class)
+            ->add("birthday", TextType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver)

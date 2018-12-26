@@ -17,25 +17,24 @@ class User
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="NONE")
      * @ORM\Column(type="string", length=65)
-     * @Assert\NotBlank
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank
+     * @Assert\NotBlank()
      */
-    private $lastname;
+    private $lastName;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank
+     * @Assert\NotBlank()
      */
-    private $firstname;
+    private $firstName;
 
     /**
      * @ORM\Column(type="date")
-     * @Assert\NotBlank
+     * @Assert\NotBlank()
      */
     private $birthday;
 
@@ -57,8 +56,8 @@ class User
         \DateTimeInterface $birthDay)
     {
         $this->id = $id;
-        $this->firstname = $firstName;
-        $this->lastname = $lastName;
+        $this->firstName = $firstName;
+        $this->lastName = $lastName;
         $this->birthday = $birthDay;
         $this->comments = new ArrayCollection();
     }
@@ -70,8 +69,8 @@ class User
      */
     public function update(string $firstName, string $lastName, \DateTimeInterface $birthDay)
     {
-        $this->firstname = $firstName;
-        $this->lastname = $lastName;
+        $this->firstName = $firstName;
+        $this->lastName = $lastName;
         $this->birthday = $birthDay;
     }
 
@@ -88,26 +87,26 @@ class User
         return $this->id;
     }
 
-    public function getLastname(): ?string
+    public function getLastName(): ?string
     {
-        return $this->lastname;
+        return $this->lastName;
     }
 
-    public function setLastname(string $lastname): self
+    public function setLastName(string $lastName): self
     {
-        $this->lastname = $lastname;
+        $this->lastName = $lastName;
 
         return $this;
     }
 
-    public function getFirstname(): ?string
+    public function getFirstName(): ?string
     {
-        return $this->firstname;
+        return $this->firstName;
     }
 
-    public function setFirstname(string $firstname): self
+    public function setFirstName(string $firstName): self
     {
-        $this->firstname = $firstname;
+        $this->firstName = $firstName;
 
         return $this;
     }

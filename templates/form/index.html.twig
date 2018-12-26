@@ -1,13 +1,17 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    {{ form_start(form, {'methode': 'POST'}) }}
-    {{ form_errors(form) }}
+    <div class="container" id="form_container">
 
-    {{ form_row(form.username) }}
-    {{ form_row(form.pseudo) }}
+        {{ form_start(form, {'methode': 'POST'}) }}
+        {{ form_errors(form) }}
 
+        {{ form_row(form.username) }}
+        {{ form_row(form.pseudo) }}
+        {{ form_row(form.lastName) }}
+        {{ form_row(form.firstName) }}
+        {{ form_row(form.civility) }}
 
-    {{ form_end(form) }}
-
+        {{ form_end(form) }}
+    </div>
 {% endblock %}
