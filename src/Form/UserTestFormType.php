@@ -21,12 +21,12 @@ class UserTestFormType extends AbstractType
             ->add('pseudo', TextType::class)
             ->add('lastName', TextType::class)
             ->add('firstName', TextType::class)
-            ->add('civility', ChoiceType::class, [
+           /* ->add('civility', ChoiceType::class, [
                 'choices' => [
                     'Mme' => 0,
                      'Mr' => 1
                 ]])
-            ->add('Save', SubmitType::class);
+            ->add('Save', SubmitType::class)*/;
     }
 
     public function configureOptions(OptionsResolver $resolver)
