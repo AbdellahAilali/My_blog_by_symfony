@@ -15,7 +15,8 @@ framework:
     php_errors:
         log: true
 
-
+    assets:
+      base_path: '/assets'
 
     cache:
         # Put the unique name of your app here: the prefix seed
