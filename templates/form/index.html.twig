@@ -2,25 +2,71 @@
 
 {% block body %}
     <div class="container">
-        <!-- Stack the columns on mobile by making one full-width and the other half-width -->
+        {{ form_start(form, {'methode': 'POST'}) }}
+        {{ form_errors(form) }}
         <div class="row">
-            <div class="col-12 col-md-8">.col-12 .col-md-8</div>
-            <div class="col-6 col-md-4">.col-6 .col-md-4</div>
+            <div class="lo col-12 col-sm-5 col-lg-3 col-xl-2">
+                {{ form_row(form.civility) }}
+            </div>
+            <div class="lo col-12 col-sm-5 col-lg-3 col-xl-2">
+                {{ form_widget(form.pseudo) }}
+            </div>
         </div>
+        <div class="row">
+            <div class="lo col-12 col-sm-5 col-lg-3 col-xl-3">
+                {{ form_widget(form.lastName) }}
+            </div>
+            <div class="lo col-12 col-sm-5 col-lg-3 col-xl-3>">
+                {{ form_widget(form.firstName) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="lo col-12 col-sm-5 col-lg-3 col-xl-2">
+                {{ form_widget(form.street) }}
+            </div>
+            <div class="lo col-12 col-sm-5 col-lg-3 col-xl-2">
+                {{ form_widget(form.complement) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="lo col-12 col-sm-5 col-lg-3 col-xl-2">
+                {{ form_widget(form.city) }}
+            </div>
+            <div class="lo col-12 col-sm-5 col-lg-3 col-xl-2">
+                {{ form_widget(form.postalCode) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="lo col-12 col-sm-5 col-lg-3 col-xl-2">
+                {{ form_widget(form.phoneNumber) }}
+            </div>
+            <div class="lo col-12 col-sm-5 col-lg-3 col-xl-2">
+                {{ form_widget(form.email) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="lo col-12 col-sm-5 col-lg-3 col-xl-2">
+                {{ form_widget(form.password) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="lo col-12 col-sm-5 col-lg-3 col-xl-2">
+                <input type="submit" value="S'inscrire">
+            </div>
+        </div>
+        {{ form_end(form) }}
 
-        <!-- Columns start at 50% wide on mobile and bump up to 33.3% wide on desktop -->
-        <div class="row">
-            <div class="col-6 col-md-4">.col-6 .col-md-4</div>
-            <div class="col-6 col-md-4">.col-6 .col-md-4</div>
-            <div class="col-6 col-md-4">.col-6 .col-md-4</div>
-        </div>
 
-        <!-- Columns are always 50% wide, on mobile and desktop -->
-        <div class="row">
-            <div class="col-6">.col-6</div>
-            <div class="col-6">.col-6</div>
-        </div>
+
     </div>
-
-
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function () {
+
+        })
+    </script>
+{% endblock %}
+
