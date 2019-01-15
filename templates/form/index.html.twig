@@ -2,60 +2,60 @@
 
 {% block body %}
     <div class="container">
-        {{ form_start(form, {'methode': 'POST'}) }}
+        {{ form_start(form , { 'attr' : { 'novalidate' : 'novalidate' }} )}}
         {{ form_errors(form) }}
-        <div class="row">
-            <div class="lo col-12 col-sm-5 col-lg-3 col-xl-2">
+
+        <div class="row ">
+            <div class="lo col-12 col-sm-5 ">
                 {{ form_row(form.civility) }}
             </div>
-            <div class="lo col-12 col-sm-5 col-lg-3 col-xl-2">
+            <div class="lo col-12 col-sm-5">
                 {{ form_widget(form.pseudo) }}
             </div>
         </div>
         <div class="row">
-            <div class="lo col-12 col-sm-5 col-lg-3 col-xl-3">
+            <div class="lo col-12 col-sm-5 l">
                 {{ form_widget(form.lastName) }}
             </div>
-            <div class="lo col-12 col-sm-5 col-lg-3 col-xl-3>">
+            <div class="lo col-12 col-sm-5 ">
                 {{ form_widget(form.firstName) }}
             </div>
         </div>
         <div class="row">
-            <div class="lo col-12 col-sm-5 col-lg-3 col-xl-2">
+            <div class="lo col-12 col-sm-5 ">
                 {{ form_widget(form.street) }}
             </div>
-            <div class="lo col-12 col-sm-5 col-lg-3 col-xl-2">
+            <div class="lo col-12 col-sm-5 ">
                 {{ form_widget(form.complement) }}
             </div>
         </div>
-        <div class="row">
-            <div class="lo col-12 col-sm-5 col-lg-3 col-xl-2">
-                {{ form_widget(form.city) }}
+        <div class="row ">
+            <div class="lo col-6 col-sm-5 col-lg-3">
+                {{ form_widget(form.city, { 'attr': {'class' : 'custom-select my-1 mr-sm-2', 'id':'inlineFormCustomSelectPref'}}) }}
             </div>
-            <div class="lo col-12 col-sm-5 col-lg-3 col-xl-2">
+        </div>
+        <div class="row ">
+            <div class="lo col-12 col-sm-5 ">
                 {{ form_widget(form.postalCode) }}
             </div>
-        </div>
-        <div class="row">
-            <div class="lo col-12 col-sm-5 col-lg-3 col-xl-2">
+            <div class="lo col-12 col-sm-5 ">
                 {{ form_widget(form.phoneNumber) }}
             </div>
-            <div class="lo col-12 col-sm-5 col-lg-3 col-xl-2">
-                {{ form_widget(form.email) }}
-            </div>
         </div>
         <div class="row">
-            <div class="lo col-12 col-sm-5 col-lg-3 col-xl-2">
+            <div class="lo col-12 col-sm-5 ">
+                {{ form_widget(form.email) }}
+            </div>
+            <div class="lo col-12 col-sm-5 ">
                 {{ form_widget(form.password) }}
             </div>
         </div>
         <div class="row">
-            <div class="lo col-12 col-sm-5 col-lg-3 col-xl-2">
+            <div class="lo col-12 col-sm-5 ">
                 <input type="submit" value="S'inscrire">
             </div>
         </div>
         {{ form_end(form) }}
-
 
 
     </div>

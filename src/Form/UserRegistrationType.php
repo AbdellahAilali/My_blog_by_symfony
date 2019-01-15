@@ -5,11 +5,13 @@ namespace App\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CountryType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -28,53 +30,52 @@ class UserRegistrationType extends AbstractType
                     'Mr' => 1
                 ]])
             ->add('pseudo', TextType::class, [
-                'attr'=> [
-                    'placeholder'=>'pseudo'
+                'attr' => [
+                    'placeholder' => 'pseudo'
                 ]
             ])
             ->add('lastName', TextType::class, [
-               'attr'=> [
-                   'placeholder'=>'lastName'
-               ]
+                'attr' => [
+                    'placeholder' => 'lastName'
+                ]
             ])
             ->add('firstName', TextType::class, [
-                'attr'=> [
-                    'placeholder'=>'firstName'
+                'attr' => [
+                    'placeholder' => 'firstName'
                 ]
             ])
             ->add('street', TextType::class, [
-                'attr'=> [
-                    'placeholder'=>'street'
+                'attr' => [
+                    'placeholder' => 'street'
                 ]
             ])
-            ->add('city', TextType::class, [
-                'attr'=> [
-                    'placeholder'=>'city'
-                ]
+            ->add('city', CountryType::class, [
+
             ])
             ->add('complement', TextType::class, [
-                'attr'=> [
-                    'placeholder'=>'complement'
+                'attr' => [
+                    'placeholder' => 'complement'
+                ],
+                'required'=> false
+            ])
+            ->add('postalCode', TextType ::class, [
+                'attr' => [
+                    'placeholder' => 'postalCode'
                 ]
             ])
-            ->add('postalCode',TextType ::class, [
-                'attr'=> [
-                    'placeholder'=>'postalCode'
-                ]
-            ])
-            ->add('phoneNumber', TextType::class, [
-                'attr'=> [
-                    'placeholder'=>'phoneNumber'
+            ->add('phoneNumber', TelType::class, [
+                'attr' => [
+                    'placeholder' => 'phoneNumber'
                 ]
             ])
             ->add('email', EmailType::class, [
-                'attr'=> [
-                    'placeholder'=>'email'
+                'attr' => [
+                    'placeholder' => 'johndoe@gmail.com',
                 ]
             ])
             ->add('password', PasswordType::class, [
-                'attr'=> [
-                    'placeholder'=>'password'
+                'attr' => [
+                    'placeholder' => 'password'
                 ]
             ]);
 
@@ -83,7 +84,8 @@ class UserRegistrationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'csrf_protection' => false
+            'csrf_protection' => false,
+            'allow_extra_fields'=> false
         ]);
     }
 }
