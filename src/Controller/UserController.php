@@ -16,7 +16,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Routing\Annotation;
+
 
 class UserController extends AbstractController
 {
@@ -70,21 +71,22 @@ class UserController extends AbstractController
 
     /**
      * @Route ("/", name="user", methods={"GET"})
-     * @return Response
+     * @return JsonResponse
      */
     public function loadAllUserAction()
     {
         try {
+            echo 'mark1';
             $tabUser = $this->userManager->loadAllUser();
-        } catch (NotFoundHttpException $exception) {
 
+        } catch (NotFoundHttpException $exception) {
             return new JsonResponse(['error_message' =>
                 $exception->getMessage()],
                 $exception->getStatusCode());
         }
 
 
-        return new JsonResponse($tabUser[0]['comments']);
+        return new JsonResponse($tabUser);
     }
 
     /**
